@@ -1,8 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
+using Telerik.Sitefinity.Modules.Libraries.Configuration;
+using Telerik.Sitefinity.Processors.Configuration;
 using Telerik.Sitefinity.Services;
 
 namespace Telerik.Sitefinity.ImageOptimization
@@ -33,16 +37,31 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         static void SystemManager_ApplicationStart(object sender, System.EventArgs e)
         {
-            if (!Startup.IsHubSpotModuleRegistered())
+            IList<IInstallableFileProcessor> imageOptimizationProcessors = new List<IInstallableFileProcessor>()
             {
-                Startup.RegisterHubSpotModule();
+                new KrakenImageOptimizationProcessor()
+            };
+
+            IList<IInstallableFileProcessor> imageOptimizationProcessorsToRegister = new List<IInstallableFileProcessor>();
+            foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
+            {
+                if (!Startup.IsImageOptimizationProcessorRegistered(imageOptimizationProcessor))
+                {
+                    imageOptimizationProcessorsToRegister.Add(imageOptimizationProcessor);
+                }
+            }
+
+            if (imageOptimizationProcessorsToRegister.Any())
+            {
+                Startup.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
             }
         }
 
-        private static bool IsHubSpotModuleRegistered()
+        private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
         {
-            SystemConfig systemConfig = Config.Get<SystemConfig>();
-            if (!systemConfig.ApplicationModules.ContainsKey(ImageOptimizationModule.ModuleName))
+            LibrariesConfig librariesConfig = Config.Get<LibrariesConfig>();
+
+            if (!librariesConfig.FileProcessors.ContainsKey(imageOptimizationProcessor.ConfigName))
             {
                 return false;
             }
@@ -50,23 +69,27 @@ namespace Telerik.Sitefinity.ImageOptimization
             return true;
         }
 
-        private static void RegisterHubSpotModule()
+        private static void RegisterImageOptimizationProcessors(IEnumerable<IInstallableFileProcessor> imageOptimizationProcessors)
         {
             SystemManager.RunWithElevatedPrivilege(d =>
             {
                 var configManager = ConfigManager.GetManager();
-                var systemConfig = configManager.GetSection<SystemConfig>();
+                var librariesConfig = configManager.GetSection<LibrariesConfig>();
+         
 
-                systemConfig.ApplicationModules.Add(new AppModuleSettings(systemConfig.ApplicationModules)
+                foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
                 {
-                    Name = ImageOptimizationModule.ModuleName,
-                    Title = "Image Optimization",
-                    Description = "Provides integration between Sitefinity and image optimization services like Kraken IO.",
-                    Type = typeof(ImageOptimizationModule).AssemblyQualifiedName,
-                    StartupType = StartupType.OnApplicationStart
-                });
+                    librariesConfig.FileProcessors.Add(imageOptimizationProcessor.ConfigName, new ProcessorConfigElement(librariesConfig.FileProcessors)
+                    {
+                        Enabled = true,
+                        Description = imageOptimizationProcessor.ConfigDescription,
+                        Name = imageOptimizationProcessor.ConfigName,
+                        Type = imageOptimizationProcessor.GetType().FullName,
+                        Parameters = imageOptimizationProcessor.ConfigParameters
+                    });
+                }
 
-                configManager.SaveSection(systemConfig);
+                configManager.SaveSection(librariesConfig);
             });
         }
     }

@@ -5,13 +5,27 @@ using System.Linq;
 using Telerik.Sitefinity.FileProcessors;
 using Telerik.Sitefinity.Processors;
 
-namespace Telerik.Sitefinity.Modules.Libraries.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization
 {
     /// <summary>
     /// Base class for image optimization processors. Image optimization processors are used to optimize the size of the image on upload, before saving it.
     /// </summary>
-    internal abstract class ImageOptimizationProcessorBase : ProcessorBase, IFileProcessor
+    internal abstract class ImageOptimizationProcessorBase : ProcessorBase, IInstallableFileProcessor
     {
+        public abstract string ConfigName { get; }
+        public abstract string ConfigDescription { get; }
+
+        public virtual NameValueCollection ConfigParameters
+        {
+            get
+            {
+                NameValueCollection configParameters = new NameValueCollection();
+                configParameters.Add(ImageOptimizationProcessorBase.SupportedExtensionsConfigName, ImageOptimizationProcessorBase.SupportedExtensionsConfigDefaultValue);
+
+                return configParameters;
+            }
+        }
+
         /// <inheritdoc />
         protected sealed override void Initialize(NameValueCollection config)
         {
@@ -79,5 +93,7 @@ namespace Telerik.Sitefinity.Modules.Libraries.ImageOptimization
         private string[] supportedExtensions;
 
         private const string SupportedExtensionsConfigName = "SupportedExtensions";
+
+        private const string SupportedExtensionsConfigDefaultValue = ".jpg;.jpeg;.png;.gif";
     }
 }

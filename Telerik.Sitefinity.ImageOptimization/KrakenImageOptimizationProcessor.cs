@@ -7,13 +7,42 @@ using Kraken.Http;
 using Kraken.Model;
 using Telerik.Sitefinity.FileProcessors;
 
-namespace Telerik.Sitefinity.Modules.Libraries.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization
 {
     /// <summary>
     /// Implementation of <see cref="ImageOptimizationProcessorBase"/> using Kraken.IO.
     /// </summary>
     internal class KrakenImageOptimizationProcessor : ImageOptimizationProcessorBase
     {
+        public override string ConfigName
+        {
+            get
+            {
+                return "Karken IO Image Optimization";
+            }
+        }
+
+        public override string ConfigDescription
+        {
+            get
+            {
+                return "Optimizes image size using Kraken.IO";
+            }
+        }
+
+        public override NameValueCollection ConfigParameters
+        {
+            get
+            {
+                var configParameters = base.ConfigParameters;
+                configParameters.Add(KrakenImageOptimizationProcessor.ApiKeyConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.ApiSecretConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.LossyCompressionConfigName, "");
+
+                return configParameters;
+            }
+        }
+
         /// <inheritdoc />
         protected override bool InitializeOverride(NameValueCollection config)
         {
