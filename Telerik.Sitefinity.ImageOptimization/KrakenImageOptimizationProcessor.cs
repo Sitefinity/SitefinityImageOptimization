@@ -38,6 +38,7 @@ namespace Telerik.Sitefinity.ImageOptimization
                 configParameters.Add(KrakenImageOptimizationProcessor.ApiKeyConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.ApiSecretConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.LossyCompressionConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.WebpCompressionConfigName, "");
 
                 return configParameters;
             }
@@ -55,6 +56,12 @@ namespace Telerik.Sitefinity.ImageOptimization
             if (!string.IsNullOrWhiteSpace(lossyCompressionString))
             {
                 this.lossyCompression = bool.Parse(lossyCompressionString);
+            }
+
+            string webpCompressionString = config[KrakenImageOptimizationProcessor.WebpCompressionConfigName];
+            if (!string.IsNullOrWhiteSpace(webpCompressionString))
+            {
+                this.webpCompression = bool.Parse(webpCompressionString);
             }
 
             string apiKey = config[KrakenImageOptimizationProcessor.ApiKeyConfigName];
@@ -84,6 +91,7 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             OptimizeUploadWaitRequest optimizeUploadWaitRequest = new OptimizeUploadWaitRequest();
             optimizeUploadWaitRequest.Lossy = this.lossyCompression;
+            optimizeUploadWaitRequest.WebP = this.webpCompression;
 
             IApiResponse<OptimizeWaitResult> response = this.client.OptimizeWait(imageBytes, imageName, optimizeUploadWaitRequest).Result;
 
@@ -93,6 +101,12 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
 
             Stream stream = this.GetImageStream(response.Body.KrakedUrl);
+
+            if (this.webpCompression)
+            {
+                fileInput.FileExtension = ".webp";
+                fileInput.MimeType = "image/webp";
+            }
 
             return stream;
         }
@@ -135,6 +149,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private bool lossyCompression;
 
+        private bool webpCompression;
+
         private Client client;
 
         private const string ApiKeyConfigName = "ApiKey";
@@ -142,5 +158,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         private const string ApiSecretConfigName = "ApiSecret";
 
         private const string LossyCompressionConfigName = "LossyCompression";
+
+        private const string WebpCompressionConfigName = "WebpCompression";
     }
 }
