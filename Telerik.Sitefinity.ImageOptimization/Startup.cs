@@ -55,6 +55,8 @@ namespace Telerik.Sitefinity.ImageOptimization
             {
                 Startup.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
             }
+
+            Startup.InitializeHelperFields();
         }
 
         private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
@@ -75,7 +77,7 @@ namespace Telerik.Sitefinity.ImageOptimization
             {
                 var configManager = ConfigManager.GetManager();
                 var librariesConfig = configManager.GetSection<LibrariesConfig>();
-         
+
 
                 foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
                 {
@@ -91,6 +93,11 @@ namespace Telerik.Sitefinity.ImageOptimization
 
                 configManager.SaveSection(librariesConfig);
             });
+        }
+
+        private static void InitializeHelperFields()
+        {
+            ImageOptimizationFieldBuilder.CreateRequiredFields();
         }
     }
 }
