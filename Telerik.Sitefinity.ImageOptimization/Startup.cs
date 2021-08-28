@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
+using Telerik.Sitefinity.ImageOptimization.Configuration;
+using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Modules.Libraries.Configuration;
 using Telerik.Sitefinity.Processors.Configuration;
 using Telerik.Sitefinity.Services;
@@ -23,19 +26,11 @@ namespace Telerik.Sitefinity.ImageOptimization
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static void OnPreApplicationStart()
         {
-            Bootstrapper.Initialized -= Bootstrapper_Initialized;
-            Bootstrapper.Initialized += Bootstrapper_Initialized;
+            Bootstrapper.Bootstrapped -= Bootstrapper_Bootstrapped;
+            Bootstrapper.Bootstrapped += Bootstrapper_Bootstrapped;
         }
 
-        private static void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
-        {
-            if (e.CommandName == "Bootstrapped")
-            {
-                SystemManager.ApplicationStart += SystemManager_ApplicationStart;
-            }
-        }
-
-        static void SystemManager_ApplicationStart(object sender, System.EventArgs e)
+        private static void Bootstrapper_Bootstrapped(object sender, EventArgs e)
         {
             IList<IInstallableFileProcessor> imageOptimizationProcessors = new List<IInstallableFileProcessor>()
             {
@@ -57,6 +52,9 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
 
             Startup.InitializeHelperFields();
+
+            Res.RegisterResource<ImageOptimizationResources>();
+            Config.RegisterSection<ImageOptimizationConfig>();
         }
 
         private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
