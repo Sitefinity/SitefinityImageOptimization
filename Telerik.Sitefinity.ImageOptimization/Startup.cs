@@ -55,6 +55,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             Res.RegisterResource<ImageOptimizationResources>();
             Config.RegisterSection<ImageOptimizationConfig>();
+
+            Startup.RegisterCrontabTasks();
         }
 
         private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
@@ -96,6 +98,12 @@ namespace Telerik.Sitefinity.ImageOptimization
         private static void InitializeHelperFields()
         {
             ImageOptimizationFieldBuilder.CreateRequiredFields();
+        }
+
+        private static void RegisterCrontabTasks()
+        {
+            ImageOptimizationTask.RemoveScheduledTasks();
+            SystemManager.CrontabTasksToRun.Add(ImageOptimizationTask.GetTaskName(), ImageOptimizationTask.NewInstance);
         }
     }
 }

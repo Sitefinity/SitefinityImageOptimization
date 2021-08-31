@@ -230,9 +230,12 @@
     <Compile Include="ImageOptimizationFieldBuilder.cs" />
     <Compile Include="ImageOptimizationProcessorBase.cs" />
     <Compile Include="ImageOptimizationResources.cs" />
+    <Compile Include="ImageOptimizationTask.cs" />
     <Compile Include="KrakenImageOptimizationProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\CrontabScheduleCalculator.cs" />
+    <Compile Include="Utils\IScheduleCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
