@@ -227,6 +227,7 @@
   <ItemGroup>
     <Compile Include="Configuration\ImageOptimizationConfig.cs" />
     <Compile Include="IInstallableFileProcessor.cs" />
+    <Compile Include="ImageOptimizationBackgroundProcessor.cs" />
     <Compile Include="ImageOptimizationFieldBuilder.cs" />
     <Compile Include="ImageOptimizationProcessorBase.cs" />
     <Compile Include="ImageOptimizationResources.cs" />

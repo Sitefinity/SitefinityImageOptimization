@@ -20,16 +20,16 @@ namespace Telerik.Sitefinity.ImageOptimization
         internal static void CreateRequiredFields()
         {
             // Creation of IsOptimized boolean field
-            var contentType = typeof(Image);
-            var fieldName = ImageOptimizationFieldBuilder.isOptimizedFieldName;
-            var userFriendlyDataType = UserFriendlyDataType.YesNo;
+            Type contentType = typeof(Image);
+            string fieldName = ImageOptimizationFieldBuilder.IsOptimizedFieldName;
+            UserFriendlyDataType userFriendlyDataType = UserFriendlyDataType.YesNo;
 
-            var metadataManager = MetadataManager.GetManager();
-            var metaType = metadataManager.GetMetaType(contentType);
+            MetadataManager metadataManager = MetadataManager.GetManager();
+            MetaType metaType = metadataManager.GetMetaType(contentType);
 
             if (metaType != null)
             {
-                var metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, fieldName, true, CultureInfo.InvariantCulture) == 0);
+                MetaField metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, fieldName, true, CultureInfo.InvariantCulture) == 0);
 
                 if (metaField == null)
                 {
@@ -37,7 +37,7 @@ namespace Telerik.Sitefinity.ImageOptimization
 
                     if (metaProperty == null)
                     {
-                        var wcfField = BuildBooleanWcfField(contentType, fieldName, true);
+                        WcfField wcfField = BuildBooleanWcfField(contentType, fieldName, true);
 
                         metaField = metadataManager.CreateMetafield(fieldName);
 
@@ -57,7 +57,7 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private static WcfField BuildBooleanWcfField(Type contentType, string fieldName, bool isHidden)
         {
-            var wcfField = new WcfField()
+            WcfField wcfField = new WcfField()
             {
                 Name = fieldName,
                 ContentType = contentType.FullName,
@@ -102,6 +102,6 @@ namespace Telerik.Sitefinity.ImageOptimization
             return wcfField;
         }
 
-        private static readonly string isOptimizedFieldName = "IsOptimized";
+        public static readonly string IsOptimizedFieldName = "IsOptimized";
     }
 }

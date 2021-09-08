@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
+using Telerik.Sitefinity.Data.Metadata;
 using Telerik.Sitefinity.ImageOptimization.Configuration;
 using Telerik.Sitefinity.ImageOptimization.Utils;
+using Telerik.Sitefinity.Libraries.Model;
+using Telerik.Sitefinity.Metadata.Model;
 using Telerik.Sitefinity.Scheduling;
 using Telerik.Sitefinity.Scheduling.Model;
-using Telerik.Sitefinity.Services;
 
 namespace Telerik.Sitefinity.ImageOptimization
 {
@@ -24,8 +24,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         public override void ExecuteTask()
         {
-            Log.Write("Image optimization task executed");
-            Thread.Sleep(100000);
+            ImageOptimizationBackgroundProcessor backgroundProcessor = new ImageOptimizationBackgroundProcessor();
+            backgroundProcessor.ProcessImages();
         }
 
         public override string TaskName
@@ -38,20 +38,35 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         internal static ScheduledTask NewInstance()
         {
-            var imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
+            ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
             if (!imageOptimizationConfig.EnableImageOptimization)
             {
                 return null;
+            }
+
+            // Schedule a task only if required IsOptimized field is present
+            Type contentType = typeof(Image);
+            MetadataManager metadataManager = MetadataManager.GetManager();
+            MetaType metaType = metadataManager.GetMetaType(contentType);
+
+            if (metaType != null)
+            {
+                MetaField metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, ImageOptimizationFieldBuilder.IsOptimizedFieldName, true, CultureInfo.InvariantCulture) == 0);
+
+                if (metaField != null)
+                {
+                    return null;
+                }
             }
 
             string crontabConfig = imageOptimizationConfig.ImageOptimizationCronSpec;
 
             if (string.IsNullOrEmpty(crontabConfig))
             {
-                    crontabConfig = ImageOptimizationTask.DefaultCronExpression;
+                crontabConfig = ImageOptimizationTask.DefaultCronExpression;
             }
 
-            var task = new ImageOptimizationTask()
+            ImageOptimizationTask task = new ImageOptimizationTask()
             {
                 Id = Guid.NewGuid(),
                 ExecuteTime = DateTime.UtcNow,
@@ -66,7 +81,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         {
             ImageOptimizationTask.RemoveScheduledTasks();
 
-            var newTask = ImageOptimizationTask.NewInstance();
+            ScheduledTask newTask = ImageOptimizationTask.NewInstance();
             if (newTask != null)
             {
                 ImageOptimizationTask.AddScheduledTask(newTask);
@@ -75,7 +90,7 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         internal static void RemoveScheduledTasks()
         {
-            var manager = SchedulingManager.GetManager();
+            SchedulingManager manager = SchedulingManager.GetManager();
 
             IList<ScheduledTaskData> scheduledItems = SchedulingManager.GetTasksFromAllProviders(t => t.TaskName == ImageOptimizationTask.GetTaskName());
             foreach (ScheduledTaskData task in scheduledItems)
@@ -88,7 +103,7 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         internal static void AddScheduledTask(ScheduledTask newTask)
         {
-            var manager = SchedulingManager.GetManager();
+            SchedulingManager manager = SchedulingManager.GetManager();
 
             manager.AddTask(newTask);
             manager.SaveChanges();
