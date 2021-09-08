@@ -904,21 +904,6 @@
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0.3\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>
-    <Reference Include="Telerik.Sitefinity.DropboxLibraries, Version=10.2.6626.0, Culture=neutral, PublicKeyToken=b28c218413bdf563">
-      <HintPath>..\packages\Telerik.Sitefinity.DropboxLibraries.10.2.6626\lib\net45\Telerik.Sitefinity.DropboxLibraries.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Sitefinity.Thunder.CodeSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b28c218413bdf563">
-      <HintPath>..\packages\Telerik.Sitefinity.Thunder.10.2.6626\lib\net45\Telerik.Sitefinity.Thunder.CodeSync.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Sitefinity.Thunder.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b28c218413bdf563">
-      <HintPath>..\packages\Telerik.Sitefinity.Thunder.10.2.6626\lib\net45\Telerik.Sitefinity.Thunder.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Sitefinity.Thunder.Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b28c218413bdf563">
-      <HintPath>..\packages\Telerik.Sitefinity.Thunder.10.2.6626\lib\net45\Telerik.Sitefinity.Thunder.Module.dll</HintPath>
-    </Reference>
-    <Reference Include="Telerik.Sitefinity.Thunder.Zip, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b28c218413bdf563">
-      <HintPath>..\packages\Telerik.Sitefinity.Thunder.10.2.6626\lib\net45\Telerik.Sitefinity.Thunder.Zip.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
