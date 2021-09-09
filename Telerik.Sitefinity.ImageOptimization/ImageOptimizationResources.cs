@@ -41,9 +41,9 @@ namespace Telerik.Sitefinity.ImageOptimization
         /// <summary>
         /// Description of the image optimization resources class
         /// </summary>
-        /// <value>Contains localizable resources for image optimization.</value>
+        /// <value>Contains localizable resources for image optimization</value>
         [ResourceEntry("ImageOptimizationResourcesDescription",
-            Value = "Contains localizable resources for image optimization.",
+            Value = "Contains localizable resources for image optimization",
             Description = "Description of the image optimization resources class",
             LastModified = "2021/08/28")]
         public string ImageOptimizationResourcesDescription
@@ -55,8 +55,9 @@ namespace Telerik.Sitefinity.ImageOptimization
         }
 
         /// <summary>
-        /// Resource strings Image Optimization
+        /// Image optimization configuration caption
         /// </summary>
+        /// <value>Image Optimization</value>
         [ResourceEntry("ImageOptimizationConfigCaption",
             Value = "Image Optimization",
             Description = "Image optimization configuration caption",
@@ -70,11 +71,12 @@ namespace Telerik.Sitefinity.ImageOptimization
         }
 
         /// <summary>
-        /// Resource strings for Image optimization description.
+        /// Defines configuration settings for Image optimization
         /// </summary>
+        /// <value>Image optimization configuration description</value>
         [ResourceEntry("ImageOptimizationConfigDescription",
-            Value = "Defines configuration settings for Image optimization",
-            Description = "Image optimization configuration description.",
+            Value = "Image optimization configuration description",
+            Description = "Defines configuration settings for Image optimization",
             LastModified = "2021/08/28")]
         public string ImageOptimizationConfigDescription
         {
@@ -87,7 +89,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         /// <summary>
         /// Enable image optimization scheduled task title
         /// </summary>
-        /// <value>Contains localizable resources for image optimization.</value>
+        /// <value>Enable image optimization scheduled task</value>
         [ResourceEntry("EnableImageOptimizationTitle",
             Value = "Enable image optimization scheduled task",
             Description = "Enable image optimization scheduled task title",
@@ -103,9 +105,9 @@ namespace Telerik.Sitefinity.ImageOptimization
         /// <summary>
         /// Enable image optimization scheduled task description
         /// </summary>
-        /// <value>When disabled the image optimization scheduled task will not be executed</value>
+        /// <value>When disabled the image optimization scheduled task will not be executed.</value>
         [ResourceEntry("EnableImageOptimizationDescription",
-            Value = "When disabled the image optimization scheduled task will not be executed",
+            Value = "When disabled the image optimization scheduled task will not be executed.",
             Description = "Enable image optimization scheduled task description",
             LastModified = "2021/08/28")]
         public string EnableImageOptimizationDescription
@@ -145,6 +147,70 @@ namespace Telerik.Sitefinity.ImageOptimization
             get
             {
                 return this["ImageOptimizationCronSpecDescription"];
+            }
+        }
+
+        /// <summary>
+        /// phrase: Batch size
+        /// </summary>
+        /// <value>Batch size</value>
+        [ResourceEntry("ImageOptimizationBatchSizeTitle",
+            Value = "Batch size",
+            Description = "phrase: Batch size",
+            LastModified = "2015/06/19")]
+        public string ImageOptimizationBatchSizeTitle
+        {
+            get
+            {
+                return this["ImageOptimizationBatchSizeTitle"];
+            }
+        }
+
+        /// <summary>
+        /// phrase: The number of images that will be processed on each scheduled task execution. Default: 100
+        /// </summary>
+        /// <value>The number of images that will be processed on each scheduled task execution. Default: 100</value>
+        [ResourceEntry("ImageOptimizationBatchSizeDescription",
+            Value = "The number of images that will be processed on each scheduled task execution. Default: 100",
+            Description = "phrase: The number of images that will be processed on each scheduled task execution. Default: 100",
+            LastModified = "2015/06/19")]
+        public string ImageOptimizationBatchSizeDescription
+        {
+            get
+            {
+                return this["ImageOptimizationBatchSizeDescription"];
+            }
+        }
+
+        /// <summary>
+        /// Enable image optimization detail logging  title
+        /// </summary>
+        /// <value>Enable image optimization detail logging</value>
+        [ResourceEntry("EnableDetailLoggingTitle",
+            Value = "Enable image optimization detail logging",
+            Description = "Enable image optimization detail logging  title",
+            LastModified = "2021/09/08")]
+        public string EnableDetailLoggingTitle
+        {
+            get
+            {
+                return this["EnableDetailLoggingTitle"];
+            }
+        }
+
+        /// <summary>
+        /// Enable image optimization detail logging description
+        /// </summary>
+        /// <value>When enabled the image optimization scheduled task will log detailed information on the processed images.</value>
+        [ResourceEntry("EnableDetailLoggingDescription",
+            Value = "When enabled the image optimization scheduled task will log detailed information on the processed images.",
+            Description = "Enable image optimization detail logging description",
+            LastModified = "2021/09/08")]
+        public string EnableDetailLoggingDescription
+        {
+            get
+            {
+                return this["EnableDetailLoggingDescription"];
             }
         }
     }

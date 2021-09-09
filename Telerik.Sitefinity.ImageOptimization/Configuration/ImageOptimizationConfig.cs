@@ -62,10 +62,45 @@ namespace Telerik.Sitefinity.ImageOptimization.Configuration
             }
         }
 
+        [ConfigurationProperty(ConfigProps.ImageOptimizationBatchSize, DefaultValue = 100)]
+        [ObjectInfo(typeof(ImageOptimizationResources), Title = "ImageOptimizationBatchSizeTitle", Description = "ImageOptimizationBatchSizeDescription")]
+        public virtual int BatchSize
+        {
+            get
+            {
+                return (int)this[ConfigProps.ImageOptimizationBatchSize];
+            }
+
+            set
+            {
+                this[ConfigProps.ImageOptimizationBatchSize] = value;
+            }
+        }
+
+        /// <summary>
+        ///  Gets or sets a value indicating whether to enable image optimization.
+        /// </summary>
+        [ConfigurationProperty(ConfigProps.EnableDetailLogging, DefaultValue = false)]
+        [ObjectInfo(typeof(ImageOptimizationResources), Title = "EnableDetailLoggingTitle", Description = "EnableDetailLoggingDescription")]
+        public bool EnableDetailLogging
+        {
+            get
+            {
+                return (bool)this[ConfigProps.EnableDetailLogging];
+            }
+
+            set
+            {
+                this[ConfigProps.EnableDetailLogging] = value;
+            }
+        }
+
         internal struct ConfigProps
         {
             public const string EnableImageOptimization = "enableImageOptimization";
             public const string ImageOptimizationCronSpec = "imageOptimizationCronSpec";
+            public const string ImageOptimizationBatchSize = "batchSize";
+            public const string EnableDetailLogging = "enableDetailLogging";
         }
     }
 }

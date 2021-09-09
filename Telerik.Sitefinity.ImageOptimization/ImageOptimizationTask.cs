@@ -53,7 +53,7 @@ namespace Telerik.Sitefinity.ImageOptimization
             {
                 MetaField metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, ImageOptimizationFieldBuilder.IsOptimizedFieldName, true, CultureInfo.InvariantCulture) == 0);
 
-                if (metaField != null)
+                if (metaField == null)
                 {
                     return null;
                 }
