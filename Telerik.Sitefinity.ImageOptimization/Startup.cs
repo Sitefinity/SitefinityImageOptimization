@@ -6,8 +6,13 @@ using System.Linq;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
+using Telerik.Sitefinity.Data.Events;
+using Telerik.Sitefinity.GenericContent.Model;
 using Telerik.Sitefinity.ImageOptimization.Configuration;
+using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
+using Telerik.Sitefinity.Model;
+using Telerik.Sitefinity.Modules.Libraries;
 using Telerik.Sitefinity.Modules.Libraries.Configuration;
 using Telerik.Sitefinity.Processors.Configuration;
 using Telerik.Sitefinity.Services;
@@ -27,7 +32,9 @@ namespace Telerik.Sitefinity.ImageOptimization
         public static void OnPreApplicationStart()
         {
             Bootstrapper.Bootstrapped -= Bootstrapper_Bootstrapped;
+            Bootstrapper.Initialized -= Bootstrapper_Initialized;
             Bootstrapper.Bootstrapped += Bootstrapper_Bootstrapped;
+            Bootstrapper.Initialized += Bootstrapper_Initialized;
         }
 
         private static void Bootstrapper_Bootstrapped(object sender, EventArgs e)
@@ -57,6 +64,49 @@ namespace Telerik.Sitefinity.ImageOptimization
             Config.RegisterSection<ImageOptimizationConfig>();
 
             Startup.RegisterCrontabTasks();
+        }
+
+        private static void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
+        {
+            if (e.CommandName == "Bootstrapped")
+            {
+                EventHub.Subscribe<IDataEvent>(Content_Action);
+            }
+        }
+
+        private static void Content_Action(IDataEvent @event)
+        {
+            try
+            {
+                string action = @event.Action;
+                Type contentType = @event.ItemType;
+                Guid itemId = @event.ItemId;
+                string providerName = @event.ProviderName;
+
+                if (action != "New" || contentType != typeof(Image))
+                {
+                    return;
+                }
+
+                IManager manager = ManagerBase.GetMappedManager(contentType, providerName);
+                var item = manager.GetItemOrDefault(contentType, itemId);
+                Image imageTemp = item as Image;
+
+                if (imageTemp.Status != ContentLifecycleStatus.Temp)
+                {
+                    return;
+                }
+
+                var librariesManager = manager as LibrariesManager;
+                imageTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+
+                librariesManager.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(string.Format("Error occurred while setting image optimization field value: {0}", ex.Message), ConfigurationPolicy.ErrorLog);
+            }
+
         }
 
         private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
