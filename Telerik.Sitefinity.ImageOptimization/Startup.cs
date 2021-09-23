@@ -70,7 +70,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         {
             if (e.CommandName == "Bootstrapped")
             {
-                EventHub.Subscribe<IDataEvent>(Content_Action);
+                //EventHub.Subscribe<IDataEvent>(Content_Action);
             }
         }
 
@@ -97,10 +97,9 @@ namespace Telerik.Sitefinity.ImageOptimization
                     return;
                 }
 
-                var librariesManager = manager as LibrariesManager;
                 imageTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
 
-                librariesManager.SaveChanges();
+                manager.SaveChanges();
             }
             catch (Exception ex)
             {

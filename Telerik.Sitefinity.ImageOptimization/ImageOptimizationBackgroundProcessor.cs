@@ -13,6 +13,8 @@ using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
 using Telerik.Sitefinity.Modules.Libraries;
+using Telerik.Sitefinity.SiteSync.Configuration;
+using Telerik.Sitefinity.SiteSync.Data;
 
 namespace Telerik.Sitefinity.ImageOptimization
 {
@@ -24,10 +26,14 @@ namespace Telerik.Sitefinity.ImageOptimization
             ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
             this.batchSize = imageOptimizationConfig.BatchSize;
             this.enableDetailedLogging = imageOptimizationConfig.EnableDetailLogging;
+            this.enabledSiteSync = CheckSiteSyncStatus();
+
         }
 
         internal void ProcessImages()
         {
+            this.processStart = DateTime.UtcNow;
+
             foreach (var provider in this.Providers)
             {
                 try
@@ -39,7 +45,7 @@ namespace Telerik.Sitefinity.ImageOptimization
                         break;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     this.BuildTrace(string.Format("Optimization for provider {0} failed with exception {1}", provider, ex.Message), true);
                 }
@@ -64,28 +70,37 @@ namespace Telerik.Sitefinity.ImageOptimization
                     this.BuildTrace(string.Format("{0} - Attempting to optimize image {1} ({2})", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
 
                     Image master = image;
-                    Stream sourceImageStream = librariesManager.Download(image.Id);
-
                     Image temp = librariesManager.Lifecycle.CheckOut(image) as Image;
+
+                    Stream sourceImageStream = librariesManager.Download(image.Id);
                     librariesManager.Upload(temp, sourceImageStream, image.Extension, false);
+
                     temp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
 
                     master = librariesManager.Lifecycle.CheckIn(temp) as Image;
 
                     ProcessReplacedImageTranslations(librariesManager, master);
 
-                    librariesManager.Lifecycle.Publish(master);
+                    if (master.ApprovalWorkflowState == "Published")
+                    {
+                        librariesManager.Lifecycle.Publish(master);
+                    }
+
+                    if (this.enabledSiteSync)
+                    {
+                        this.SiteSyncUpdatedItems.Add(master.Id.ToString());
+                    }
 
                     this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
 
-                    if(processedImages % 5 == 0)
+                    if (processedImages % 5 == 0)
                     {
                         TransactionManager.CommitTransaction(transactionName);
                     }
 
                     processedImages += 1;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     this.BuildTrace(string.Format("Optimization of image {0} ({1}) failed with exception {2}", image.Title, image.Id, ex.Message), true);
                 }
@@ -96,6 +111,8 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
 
             TransactionManager.CommitTransaction(transactionName);
+
+            this.ClearSiteSyncLogEntries();
 
             return itemsProcessed;
         }
@@ -130,7 +147,10 @@ namespace Telerik.Sitefinity.ImageOptimization
 
                             translatedMaster = librariesManager.Lifecycle.CheckIn(translatedTemp) as Image;
 
-                            librariesManager.Lifecycle.Publish(translatedMaster, currentCultureInfo);
+                            if (translatedMaster.ApprovalWorkflowState.GetString(currentCultureInfo, false) == "Published")
+                            {
+                                librariesManager.Lifecycle.Publish(translatedMaster, currentCultureInfo);
+                            }
 
                             proccessedCultures.Add(linkItem.Culture);
 
@@ -142,6 +162,23 @@ namespace Telerik.Sitefinity.ImageOptimization
                         }
                     }
                 }
+            }
+        }
+
+        private void ClearSiteSyncLogEntries()
+        {
+            if (this.enabledSiteSync && this.SiteSyncUpdatedItems.Count > 0)
+            {
+                SiteSyncManager syncManager = SiteSyncManager.GetManager();
+                var entriesToDelete = syncManager.GetLogEntries().Where(le => le.ModifiedSinceLastSync && le.TypeName == typeof(Image).ToString());
+                entriesToDelete = entriesToDelete.Where(le => le.Timestamp > this.processStart && this.SiteSyncUpdatedItems.Contains(le.ItemId));
+
+                foreach (var entry in entriesToDelete)
+                {
+                    syncManager.DeleteLogEntry(entry);
+                }
+
+                syncManager.SaveChanges();
             }
         }
 
@@ -175,6 +212,24 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
         }
 
+        private bool CheckSiteSyncStatus()
+        {
+            SiteSyncConfig siteSyncConfig = Config.Get<SiteSyncConfig>();
+            bool enabledSiteSync = false;
+
+            foreach (var receivingServer in siteSyncConfig.ReceivingServers.Values)
+            {
+                if (!string.IsNullOrEmpty(receivingServer.ServerAddress))
+                {
+                    enabledSiteSync = true;
+                    break;
+                }
+            }
+
+            return enabledSiteSync;
+        }
+
+
         internal IEnumerable<string> Providers
         {
             get
@@ -188,9 +243,25 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
         }
 
+        internal IList<string> SiteSyncUpdatedItems
+        {
+            get
+            {
+                if (this.siteSyncUpdatedItems == null)
+                {
+                    this.siteSyncUpdatedItems = new List<string>();
+                }
+
+                return this.siteSyncUpdatedItems;
+            }
+        }
+
         private int batchSize;
         private bool enableDetailedLogging;
+        private bool enabledSiteSync;
         private StringBuilder logTraceBuilder;
         private IEnumerable<string> providers;
+        private IList<string> siteSyncUpdatedItems;
+        private DateTime processStart;
     }
 }

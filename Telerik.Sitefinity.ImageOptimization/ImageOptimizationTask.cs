@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Metadata;
@@ -12,6 +11,7 @@ using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Metadata.Model;
 using Telerik.Sitefinity.Scheduling;
 using Telerik.Sitefinity.Scheduling.Model;
+using Telerik.Sitefinity.Services;
 
 namespace Telerik.Sitefinity.ImageOptimization
 {
@@ -24,8 +24,11 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         public override void ExecuteTask()
         {
-            ImageOptimizationBackgroundProcessor backgroundProcessor = new ImageOptimizationBackgroundProcessor();
-            backgroundProcessor.ProcessImages();
+            SystemManager.RunWithElevatedPrivilege((parameters) =>
+            {
+                ImageOptimizationBackgroundProcessor backgroundProcessor = new ImageOptimizationBackgroundProcessor();
+                backgroundProcessor.ProcessImages();
+            });
         }
 
         public override string TaskName
