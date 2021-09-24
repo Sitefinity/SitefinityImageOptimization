@@ -70,7 +70,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         {
             if (e.CommandName == "Bootstrapped")
             {
-                //EventHub.Subscribe<IDataEvent>(Content_Action);
+                EventHub.Subscribe<IDataEvent>(Content_Action);
             }
         }
 
