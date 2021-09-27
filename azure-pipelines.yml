@@ -1,0 +1,52 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  major: 1
+  minor: 0
+  patch: 0
+  NugetVersion: $(major).$(minor).$(patch)
+
+stages:
+  - stage: "BuildAndPack"
+    displayName: "Build and Pack"
+    jobs:
+    - job: BuildAndPack
+      displayName: "Build and Pack"
+      steps:
+      - task: NuGetToolInstaller@1
+      - task: NuGetCommand@2
+        inputs:
+          command: 'restore'
+          restoreSolution: '**/*.sln'
+          feedsToUse: 'config'
+          nugetConfigPath: 'NuGet.Config'
+          versioningScheme: 'off'
+      - task: VSBuild@1
+        inputs:
+          solution: '$(solution)'
+          msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
+      - task: VSTest@2
+        inputs:
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'pack'
+          feedsToUse: 'select'
+          packagesToPack: 'Telerik.Sitefinity.ImageOptimization/Telerik.Sitefinity.ImageOptimization.csproj'
+          versioningScheme: 'byEnvVar'
+          versionEnvVar: 'NugetVersion'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
