@@ -1,5 +1,4 @@
-trigger:
-- master
+trigger: none
 
 pool:
   vmImage: 'windows-latest'
