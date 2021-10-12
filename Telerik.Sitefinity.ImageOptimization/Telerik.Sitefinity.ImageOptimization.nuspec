@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Telerik.Sitefinity.ImageOptimization</id>
+    <version>1.0.0</version>
+    <title>Telerik.Sitefinity.ImageOptimization</title>
+    <authors>Progress Software Corporation</authors>
+    <owners>Progress Software Corporation</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://www.progress.com/sitefinity-cms</projectUrl>
+    <iconUrl>http://nuget.sitefinity.com/img/progresslogo.png</iconUrl>
+    <description>This package contains assemblies that provide functionality for processing and optimizing images using third-party services like kraken.io.</description>
+    <releaseNotes>Initial implementation of image optimization.</releaseNotes>
+    <copyright>Copyright © 2005-2021 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.</copyright>
+    <tags>Sitefinity Image Optimization</tags>
+    <dependencies>
+      <dependency id="kraken-net" version="2.0.1" />
+      <dependency id="Telerik.Sitefinity.Core" version="12.2.7200" />
+      <dependency id="Telerik.Sitefinity.SiteSync" version="12.2.7200" />
+    </dependencies>
+  </metadata>
+</package>

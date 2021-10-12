@@ -7,10 +7,6 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  major: 1
-  minor: 0
-  patch: 0
-  NugetVersion: $(major).$(minor).$(patch)
 
 stages:
   - stage: "BuildAndPack"
@@ -41,9 +37,9 @@ stages:
         inputs:
           command: 'pack'
           feedsToUse: 'select'
-          packagesToPack: 'Telerik.Sitefinity.ImageOptimization/Telerik.Sitefinity.ImageOptimization.csproj'
-          versioningScheme: 'byEnvVar'
-          versionEnvVar: 'NugetVersion'
+          packagesToPack: 'Telerik.Sitefinity.ImageOptimization/Telerik.Sitefinity.ImageOptimization.nuspec'
+          versioningScheme: 'off'
+          includeReferencedProjects: true
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
