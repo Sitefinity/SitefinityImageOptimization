@@ -26,6 +26,14 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
         }
 
+        public virtual bool HasInitialized
+        {
+            get
+            {
+                return this.hasInitialized;
+            }
+        }
+
         /// <inheritdoc />
         protected sealed override void Initialize(NameValueCollection config)
         {

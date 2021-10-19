@@ -12,7 +12,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Configuration
         /// <summary>
         ///  Gets or sets a value indicating whether to enable image optimization.
         /// </summary>
-        [ConfigurationProperty(ConfigProps.EnableImageOptimization, DefaultValue = true)]
+        [ConfigurationProperty(ConfigProps.EnableImageOptimization, DefaultValue = false)]
         [ObjectInfo(typeof(ImageOptimizationResources), Title = "EnableImageOptimizationTitle", Description = "EnableImageOptimizationDescription")]
         public bool EnableImageOptimization
         {

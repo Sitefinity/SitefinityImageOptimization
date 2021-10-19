@@ -38,6 +38,7 @@ namespace Telerik.Sitefinity.ImageOptimization
                 configParameters.Add(KrakenImageOptimizationProcessor.ApiKeyConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.ApiSecretConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.LossyCompressionConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.PreserveMetadataConfigName, "");
 
                 return configParameters;
             }
@@ -55,6 +56,12 @@ namespace Telerik.Sitefinity.ImageOptimization
             if (!string.IsNullOrWhiteSpace(lossyCompressionString))
             {
                 this.lossyCompression = bool.Parse(lossyCompressionString);
+            }
+
+            string preserveMetadataString = config[KrakenImageOptimizationProcessor.PreserveMetadataConfigName];
+            if (!string.IsNullOrWhiteSpace(preserveMetadataString))
+            {
+                this.preserveMetadata = bool.Parse(preserveMetadataString);
             }
 
             string apiKey = config[KrakenImageOptimizationProcessor.ApiKeyConfigName];
@@ -84,6 +91,11 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             OptimizeUploadWaitRequest optimizeUploadWaitRequest = new OptimizeUploadWaitRequest();
             optimizeUploadWaitRequest.Lossy = this.lossyCompression;
+
+            if (this.preserveMetadata)
+            {
+                optimizeUploadWaitRequest.PreserveMeta = new PreserveMeta[] { PreserveMeta.Profile, PreserveMeta.Geotag, PreserveMeta.Date, PreserveMeta.Copyright, PreserveMeta.Orientation };
+            }
 
             IApiResponse<OptimizeWaitResult> response = this.client.OptimizeWait(imageBytes, imageName, optimizeUploadWaitRequest).Result;
 
@@ -135,6 +147,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private bool lossyCompression;
 
+        private bool preserveMetadata;
+
         private Client client;
 
         private const string ApiKeyConfigName = "ApiKey";
@@ -142,5 +156,7 @@ namespace Telerik.Sitefinity.ImageOptimization
         private const string ApiSecretConfigName = "ApiSecret";
 
         private const string LossyCompressionConfigName = "LossyCompression";
+
+        private const string PreserveMetadataConfigName = "PreserveMetadata";
     }
 }
