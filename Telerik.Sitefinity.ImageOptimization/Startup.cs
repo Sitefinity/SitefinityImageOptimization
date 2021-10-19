@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Telerik.Sitefinity.Abstractions;
@@ -12,10 +14,11 @@ using Telerik.Sitefinity.ImageOptimization.Configuration;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
-using Telerik.Sitefinity.Modules.Libraries;
 using Telerik.Sitefinity.Modules.Libraries.Configuration;
+using Telerik.Sitefinity.Processors;
 using Telerik.Sitefinity.Processors.Configuration;
 using Telerik.Sitefinity.Services;
+using Telerik.Sitefinity.Utilities.TypeConverters;
 
 namespace Telerik.Sitefinity.ImageOptimization
 {
@@ -60,6 +63,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             Startup.InitializeHelperFields();
 
+            Startup.ValidateImageOptimizationProcessorsConfigurations();
+
             Res.RegisterResource<ImageOptimizationResources>();
             Config.RegisterSection<ImageOptimizationConfig>();
 
@@ -88,16 +93,21 @@ namespace Telerik.Sitefinity.ImageOptimization
                     return;
                 }
 
-                IManager manager = ManagerBase.GetMappedManager(contentType, providerName);
-                var item = manager.GetItemOrDefault(contentType, itemId);
-                Image imageTemp = item as Image;
-
-                if (imageTemp.Status != ContentLifecycleStatus.Temp)
+                if (!Startup.hassImageOptimizationProcessorEnabled)
                 {
                     return;
                 }
 
-                imageTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                IManager manager = ManagerBase.GetMappedManager(contentType, providerName);
+                var item = manager.GetItemOrDefault(contentType, itemId);
+                Image imageMaster = item as Image;
+
+                if (imageMaster.Status != ContentLifecycleStatus.Master)
+                {
+                    return;
+                }
+
+                imageMaster.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
 
                 manager.SaveChanges();
             }
@@ -118,6 +128,40 @@ namespace Telerik.Sitefinity.ImageOptimization
             }
 
             return true;
+        }
+
+        private static void ValidateImageOptimizationProcessorsConfigurations()
+        {
+            try
+            {
+                var configFileProcessors = Config.Get<LibrariesConfig>().GetConfigProcessors();
+
+                foreach (var configFileProcessorsElement in configFileProcessors.Values)
+                {
+                    if (configFileProcessorsElement.Enabled)
+                    {
+                        var checkType = TypeResolutionService.ResolveType(configFileProcessorsElement.Type, true);
+                        IProcessor instance = (IProcessor)ObjectFactory.Resolve(checkType);
+
+                        instance.Initialize(configFileProcessorsElement.Name, new NameValueCollection(configFileProcessorsElement.Parameters));
+
+                        var installableFileProcessor = instance as IInstallableFileProcessor;
+
+                        if(installableFileProcessor != null && installableFileProcessor.HasInitialized)
+                        {
+                            Startup.hassImageOptimizationProcessorEnabled = true;
+                            return;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message, TraceEventType.Error);
+                Startup.hassImageOptimizationProcessorEnabled = false;
+            }
+
+            Startup.hassImageOptimizationProcessorEnabled = false;
         }
 
         private static void RegisterImageOptimizationProcessors(IEnumerable<IInstallableFileProcessor> imageOptimizationProcessors)
@@ -154,5 +198,7 @@ namespace Telerik.Sitefinity.ImageOptimization
             ImageOptimizationTask.RemoveScheduledTasks();
             SystemManager.CrontabTasksToRun.Add(ImageOptimizationTask.GetTaskName(), ImageOptimizationTask.NewInstance);
         }
+
+        private static bool hassImageOptimizationProcessorEnabled;
     }
 }

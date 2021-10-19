@@ -9,6 +9,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         string ConfigDescription { get; }
 
+        bool HasInitialized { get; }
+
         NameValueCollection ConfigParameters { get; }
     }
 }
