@@ -13,7 +13,7 @@ using Telerik.Sitefinity.ModuleEditor.Web.Services.Model;
 using Telerik.Sitefinity.Web.UI.Fields;
 using Telerik.Sitefinity.Web.UI.Fields.Enums;
 
-namespace Telerik.Sitefinity.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization.Utils
 {
     public static class ImageOptimizationFieldBuilder
     {
