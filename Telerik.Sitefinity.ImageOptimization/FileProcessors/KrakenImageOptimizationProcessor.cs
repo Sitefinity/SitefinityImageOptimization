@@ -1,13 +1,16 @@
-﻿using System;
+﻿using Kraken;
+using Kraken.Http;
+using Kraken.Model;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using Kraken;
-using Kraken.Http;
-using Kraken.Model;
+using System.Threading;
+using System.Threading.Tasks;
+using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.FileProcessors;
 
-namespace Telerik.Sitefinity.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
 {
     /// <summary>
     /// Implementation of <see cref="ImageOptimizationProcessorBase"/> using Kraken.IO.
@@ -39,6 +42,7 @@ namespace Telerik.Sitefinity.ImageOptimization
                 configParameters.Add(KrakenImageOptimizationProcessor.ApiSecretConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.LossyCompressionConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.PreserveMetadataConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.TimeoutConfigName, "");
 
                 return configParameters;
             }
@@ -72,6 +76,16 @@ namespace Telerik.Sitefinity.ImageOptimization
                 return false;
             }
 
+            int timeout;
+            if(int.TryParse(config[KrakenImageOptimizationProcessor.TimeoutConfigName], out timeout))
+            {
+                timeoutDurationInSeconds = timeout;
+            }
+            else
+            {
+                timeoutDurationInSeconds = KrakenImageOptimizationProcessor.timeoutDefaultDuration;
+            }
+
             var connection = Connection.Create(apiKey, apiSecret);
             this.client = new Client(connection);
 
@@ -97,16 +111,32 @@ namespace Telerik.Sitefinity.ImageOptimization
                 optimizeUploadWaitRequest.PreserveMeta = new PreserveMeta[] { PreserveMeta.Profile, PreserveMeta.Geotag, PreserveMeta.Date, PreserveMeta.Copyright, PreserveMeta.Orientation };
             }
 
-            IApiResponse<OptimizeWaitResult> response = this.client.OptimizeWait(imageBytes, imageName, optimizeUploadWaitRequest).Result;
-
-            if (!response.Success || response.StatusCode != HttpStatusCode.OK)
+            using (var timeoutCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutDurationInSeconds)))
             {
-                return fileInput.FileStream;
+                try
+                {
+                    IApiResponse<OptimizeWaitResult> response = this.client.OptimizeWait(imageBytes, imageName, optimizeUploadWaitRequest, timeoutCancellationTokenSource.Token).Result;
+
+                    if (!response.Success || response.StatusCode != HttpStatusCode.OK)
+                    {
+                        return fileInput.FileStream;
+                    }
+
+                    Stream stream = this.GetImageStream(response.Body.KrakedUrl);
+
+                    return stream;
+                }
+                catch(TaskCanceledException)
+                {
+                    Log.Write("Image optimization has timed out. Default image stream was returned.", ConfigurationPolicy.ErrorLog);
+                    return fileInput.FileStream;
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex, ConfigurationPolicy.ErrorLog);
+                    return fileInput.FileStream;
+                }
             }
-
-            Stream stream = this.GetImageStream(response.Body.KrakedUrl);
-
-            return stream;
         }
 
         /// <summary>
@@ -149,6 +179,8 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private bool preserveMetadata;
 
+        private int timeoutDurationInSeconds;
+
         private Client client;
 
         private const string ApiKeyConfigName = "ApiKey";
@@ -158,5 +190,9 @@ namespace Telerik.Sitefinity.ImageOptimization
         private const string LossyCompressionConfigName = "LossyCompression";
 
         private const string PreserveMetadataConfigName = "PreserveMetadata";
+
+        private const string TimeoutConfigName = "TimeoutAfter";
+
+        private const int timeoutDefaultDuration = 30;
     }
 }

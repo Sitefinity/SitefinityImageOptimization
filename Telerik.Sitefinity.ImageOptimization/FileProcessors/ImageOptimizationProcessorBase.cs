@@ -5,7 +5,7 @@ using System.Linq;
 using Telerik.Sitefinity.FileProcessors;
 using Telerik.Sitefinity.Processors;
 
-namespace Telerik.Sitefinity.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
 {
     /// <summary>
     /// Base class for image optimization processors. Image optimization processors are used to optimize the size of the image on upload, before saving it.
@@ -102,6 +102,6 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private const string SupportedExtensionsConfigName = "SupportedExtensions";
 
-        private const string SupportedExtensionsConfigDefaultValue = ".jpg;.jpeg;.png;.gif";
+        private const string SupportedExtensionsConfigDefaultValue = ".jpg;.jpeg;.png";
     }
 }

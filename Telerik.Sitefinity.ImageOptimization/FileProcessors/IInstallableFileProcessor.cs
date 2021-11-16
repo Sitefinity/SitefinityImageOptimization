@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using Telerik.Sitefinity.FileProcessors;
 
-namespace Telerik.Sitefinity.ImageOptimization
+namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
 {
     public interface IInstallableFileProcessor : IFileProcessor
     {

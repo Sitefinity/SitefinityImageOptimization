@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Telerik.Sitefinity.Abstractions;
@@ -11,14 +9,14 @@ using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Events;
 using Telerik.Sitefinity.GenericContent.Model;
 using Telerik.Sitefinity.ImageOptimization.Configuration;
+using Telerik.Sitefinity.ImageOptimization.FileProcessors;
+using Telerik.Sitefinity.ImageOptimization.Scheduling;
+using Telerik.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
-using Telerik.Sitefinity.Modules.Libraries.Configuration;
-using Telerik.Sitefinity.Processors;
-using Telerik.Sitefinity.Processors.Configuration;
+using Telerik.Sitefinity.Modules.Libraries;
 using Telerik.Sitefinity.Services;
-using Telerik.Sitefinity.Utilities.TypeConverters;
 
 namespace Telerik.Sitefinity.ImageOptimization
 {
@@ -44,13 +42,14 @@ namespace Telerik.Sitefinity.ImageOptimization
         {
             IList<IInstallableFileProcessor> imageOptimizationProcessors = new List<IInstallableFileProcessor>()
             {
-                new KrakenImageOptimizationProcessor()
+                new KrakenImageOptimizationProcessor(),
+                new TinifyImageOptimizationProcessor()
             };
 
             IList<IInstallableFileProcessor> imageOptimizationProcessorsToRegister = new List<IInstallableFileProcessor>();
             foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
             {
-                if (!Startup.IsImageOptimizationProcessorRegistered(imageOptimizationProcessor))
+                if (!ImageOptimizationProcessorsHelper.IsImageOptimizationProcessorRegistered(imageOptimizationProcessor))
                 {
                     imageOptimizationProcessorsToRegister.Add(imageOptimizationProcessor);
                 }
@@ -58,12 +57,12 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             if (imageOptimizationProcessorsToRegister.Any())
             {
-                Startup.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
+                ImageOptimizationProcessorsHelper.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
             }
 
             Startup.InitializeHelperFields();
 
-            Startup.ValidateImageOptimizationProcessorsConfigurations();
+            Startup.hassImageOptimizationProcessorEnabled = ImageOptimizationProcessorsHelper.ValidateImageOptimizationProcessorsConfigurations();
 
             Res.RegisterResource<ImageOptimizationResources>();
             Config.RegisterSection<ImageOptimizationConfig>();
@@ -83,109 +82,83 @@ namespace Telerik.Sitefinity.ImageOptimization
         {
             try
             {
-                string action = @event.Action;
                 Type contentType = @event.ItemType;
                 Guid itemId = @event.ItemId;
                 string providerName = @event.ProviderName;
+                string language = @event.GetLanguage();
 
-                if (action != "New" || contentType != typeof(Image))
+                if (!ValidateEventType(@event))
                 {
                     return;
                 }
 
-                if (!Startup.hassImageOptimizationProcessorEnabled)
+                if (ObjectFactory.GetArgsByName(typeof(ImageOptimizationConfig).Name, typeof(ImageOptimizationConfig)) == null)
                 {
                     return;
                 }
 
-                IManager manager = ManagerBase.GetMappedManager(contentType, providerName);
+                ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
+
+                LibrariesManager manager = ManagerBase.GetMappedManager(contentType, providerName) as LibrariesManager;
+
+                if(manager == null)
+                {
+                    return;
+                }
+
                 var item = manager.GetItemOrDefault(contentType, itemId);
-                Image imageMaster = item as Image;
+                Image image = item as Image;
 
-                if (imageMaster.Status != ContentLifecycleStatus.Master)
+                if (image.Status == ContentLifecycleStatus.Master)
                 {
-                    return;
+                    var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
+                    imageTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    manager.Lifecycle.CheckIn(imageTemp);
                 }
-
-                imageMaster.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                else if (image.Status == ContentLifecycleStatus.Temp)
+                {
+                    image.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    Image master = manager.Lifecycle.GetMaster(image) as Image;
+                    master.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                }
 
                 manager.SaveChanges();
+
             }
             catch (Exception ex)
             {
                 Log.Write(string.Format("Error occurred while setting image optimization field value: {0}", ex.Message), ConfigurationPolicy.ErrorLog);
             }
-
         }
 
-        private static bool IsImageOptimizationProcessorRegistered(IInstallableFileProcessor imageOptimizationProcessor)
+        private static bool ValidateEventType(IDataEvent @event)
         {
-            LibrariesConfig librariesConfig = Config.Get<LibrariesConfig>();
+            string action = @event.Action;
+            Type contentType = @event.ItemType;
 
-            if (!librariesConfig.FileProcessors.ContainsKey(imageOptimizationProcessor.ConfigName))
+            if (action != "Updated" || contentType != typeof(Image))
             {
                 return false;
             }
 
+            var propertyChangeDataEvent = @event as IPropertyChangeDataEvent;
+
+            if (propertyChangeDataEvent == null || (!propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == "Thumbnails") && !propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName)))
+            {
+                return false;
+            }
+
+            if(propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName))
+            {
+                var changedIsOptimized = propertyChangeDataEvent.ChangedProperties.FirstOrDefault(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName);
+
+                if ((bool)changedIsOptimized.Value.NewValue == Startup.hassImageOptimizationProcessorEnabled)
+                {
+                    return false;
+                }
+            }
+
             return true;
-        }
-
-        private static void ValidateImageOptimizationProcessorsConfigurations()
-        {
-            try
-            {
-                var configFileProcessors = Config.Get<LibrariesConfig>().GetConfigProcessors();
-
-                foreach (var configFileProcessorsElement in configFileProcessors.Values)
-                {
-                    if (configFileProcessorsElement.Enabled)
-                    {
-                        var checkType = TypeResolutionService.ResolveType(configFileProcessorsElement.Type, true);
-                        IProcessor instance = (IProcessor)ObjectFactory.Resolve(checkType);
-
-                        instance.Initialize(configFileProcessorsElement.Name, new NameValueCollection(configFileProcessorsElement.Parameters));
-
-                        var installableFileProcessor = instance as IInstallableFileProcessor;
-
-                        if(installableFileProcessor != null && installableFileProcessor.HasInitialized)
-                        {
-                            Startup.hassImageOptimizationProcessorEnabled = true;
-                            return;
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                Log.Write(ex.Message, TraceEventType.Error);
-                Startup.hassImageOptimizationProcessorEnabled = false;
-            }
-
-            Startup.hassImageOptimizationProcessorEnabled = false;
-        }
-
-        private static void RegisterImageOptimizationProcessors(IEnumerable<IInstallableFileProcessor> imageOptimizationProcessors)
-        {
-            SystemManager.RunWithElevatedPrivilege(d =>
-            {
-                var configManager = ConfigManager.GetManager();
-                var librariesConfig = configManager.GetSection<LibrariesConfig>();
-
-
-                foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
-                {
-                    librariesConfig.FileProcessors.Add(imageOptimizationProcessor.ConfigName, new ProcessorConfigElement(librariesConfig.FileProcessors)
-                    {
-                        Enabled = true,
-                        Description = imageOptimizationProcessor.ConfigDescription,
-                        Name = imageOptimizationProcessor.ConfigName,
-                        Type = imageOptimizationProcessor.GetType().FullName,
-                        Parameters = imageOptimizationProcessor.ConfigParameters
-                    });
-                }
-
-                configManager.SaveSection(librariesConfig);
-            });
         }
 
         private static void InitializeHelperFields()
