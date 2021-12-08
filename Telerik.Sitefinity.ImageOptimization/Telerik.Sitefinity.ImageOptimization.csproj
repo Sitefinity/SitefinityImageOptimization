@@ -333,6 +333,7 @@
     <Compile Include="Configuration\ImageOptimizationConfig.cs" />
     <Compile Include="FileProcessors\IInstallableFileProcessor.cs" />
     <Compile Include="Scheduling\ImageOptimizationBackgroundProcessor.cs" />
+    <Compile Include="Utils\ImageOptimizationConstants.cs" />
     <Compile Include="Utils\ImageOptimizationFieldBuilder.cs" />
     <Compile Include="FileProcessors\ImageOptimizationProcessorBase.cs" />
     <Compile Include="Configuration\ImageOptimizationResources.cs" />

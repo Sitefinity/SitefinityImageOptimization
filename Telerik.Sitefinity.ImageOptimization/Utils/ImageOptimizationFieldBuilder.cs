@@ -21,7 +21,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Utils
         {
             // Creation of IsOptimized boolean field
             Type contentType = typeof(Image);
-            string fieldName = ImageOptimizationFieldBuilder.IsOptimizedFieldName;
+            string fieldName = ImageOptimizationConstants.IsOptimizedFieldName;
             UserFriendlyDataType userFriendlyDataType = UserFriendlyDataType.YesNo;
 
             MetadataManager metadataManager = MetadataManager.GetManager();
@@ -101,7 +101,5 @@ namespace Telerik.Sitefinity.ImageOptimization.Utils
 
             return wcfField;
         }
-
-        public static readonly string IsOptimizedFieldName = "IsOptimized";
     }
 }

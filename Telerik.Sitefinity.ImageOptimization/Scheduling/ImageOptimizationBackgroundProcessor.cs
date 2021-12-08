@@ -56,7 +56,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
             bool itemsProcessed = false;
             int processedImages = 0;
 
-            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && !i.GetValue<bool>(ImageOptimizationFieldBuilder.IsOptimizedFieldName)).Take(this.batchSize);
+            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName)).Take(this.batchSize);
 
             foreach (var image in images)
                     {
@@ -70,7 +70,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
                             Stream sourceImageStream = librariesManager.Download(image.Id);
                             librariesManager.Upload(temp, sourceImageStream, image.Extension, true);
 
-                            temp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                            temp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
 
                             master = librariesManager.Lifecycle.CheckIn(temp) as Image;
 
@@ -131,7 +131,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
 
                             Stream translationSourceImageStream = librariesManager.Download(linkItem.MediaContentId);
                             librariesManager.Upload(translatedTemp, translationSourceImageStream, image.Extension, false);
-                            translatedTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                            translatedTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
 
                             translatedMaster = librariesManager.Lifecycle.CheckIn(translatedTemp) as Image;
 

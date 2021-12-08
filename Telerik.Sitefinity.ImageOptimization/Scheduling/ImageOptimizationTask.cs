@@ -42,6 +42,14 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
 
         internal static ScheduledTask NewInstance()
         {
+            var disableImageOptimizationAppSetting = System.Configuration.ConfigurationManager.AppSettings[ImageOptimizationConstants.DisableImageOptimizationAppSettingKey];
+            bool disableImageOptimization;
+
+            if (bool.TryParse(disableImageOptimizationAppSetting, out disableImageOptimization) && disableImageOptimization)
+            {
+                return null;
+            }
+
             if (ObjectFactory.GetArgsByName(typeof(ImageOptimizationConfig).Name, typeof(ImageOptimizationConfig)) == null)
             {
                 return null;
@@ -66,7 +74,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
 
             if (metaType != null)
             {
-                MetaField metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, ImageOptimizationFieldBuilder.IsOptimizedFieldName, true, CultureInfo.InvariantCulture) == 0);
+                MetaField metaField = metaType.Fields.SingleOrDefault(f => string.Compare(f.FieldName, ImageOptimizationConstants.IsOptimizedFieldName, true, CultureInfo.InvariantCulture) == 0);
 
                 if (metaField == null)
                 {
