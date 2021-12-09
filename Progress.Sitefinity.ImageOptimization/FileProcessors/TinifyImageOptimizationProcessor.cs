@@ -7,7 +7,7 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.FileProcessors;
 using TinifyAPI;
 
-namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
+namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 {
     /// <summary>
     /// Implementation of <see cref="ImageOptimizationProcessorBase"/> using Tinify

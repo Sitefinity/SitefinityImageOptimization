@@ -1405,9 +1405,9 @@
     <Content Include="App_Data\RadSpell\de-DE.tdf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telerik.Sitefinity.ImageOptimization\Telerik.Sitefinity.ImageOptimization.csproj">
+    <ProjectReference Include="..\Progress.Sitefinity.ImageOptimization\Progress.Sitefinity.ImageOptimization.csproj">
       <Project>{dc579970-a261-4fc3-9270-60e35b658799}</Project>
-      <Name>Telerik.Sitefinity.ImageOptimization</Name>
+      <Name>Progress.Sitefinity.ImageOptimization</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -8,17 +8,17 @@ using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Events;
 using Telerik.Sitefinity.GenericContent.Model;
-using Telerik.Sitefinity.ImageOptimization.Configuration;
-using Telerik.Sitefinity.ImageOptimization.FileProcessors;
-using Telerik.Sitefinity.ImageOptimization.Scheduling;
-using Telerik.Sitefinity.ImageOptimization.Utils;
+using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.FileProcessors;
+using Progress.Sitefinity.ImageOptimization.Scheduling;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
 using Telerik.Sitefinity.Modules.Libraries;
 using Telerik.Sitefinity.Services;
 
-namespace Telerik.Sitefinity.ImageOptimization
+namespace Progress.Sitefinity.ImageOptimization
 {
     /// <summary>
     /// Contains the application startup event handlers registering the required components for the packaging module of Sitefinity.

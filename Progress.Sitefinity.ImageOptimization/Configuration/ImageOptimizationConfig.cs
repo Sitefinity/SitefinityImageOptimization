@@ -4,7 +4,7 @@ using System.Configuration;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Localization;
 
-namespace Telerik.Sitefinity.ImageOptimization.Configuration
+namespace Progress.Sitefinity.ImageOptimization.Configuration
 {
     [ObjectInfo(typeof(ImageOptimizationResources), Title = "ImageOptimizationConfigCaption", Description = "ImageOptimizationConfigDescription")]
     public class ImageOptimizationConfig : ConfigSection

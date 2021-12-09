@@ -1,16 +1,16 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web;
-using Telerik.Sitefinity.ImageOptimization;
+using Progress.Sitefinity.ImageOptimization;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Telerik.Sitefinity.ImageOptimization")]
+[assembly: AssemblyTitle("Progress.Sitefinity.ImageOptimization")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Telerik.Sitefinity.ImageOptimization")]
+[assembly: AssemblyProduct("Progress.Sitefinity.ImageOptimization")]
 [assembly: AssemblyCopyright("Copyright © 2005-2019 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

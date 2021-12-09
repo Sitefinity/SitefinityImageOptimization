@@ -1,7 +1,7 @@
 ﻿using NCrontab;
 using System;
 
-namespace Telerik.Sitefinity.ImageOptimization.Utils
+namespace Progress.Sitefinity.ImageOptimization.Utils
 {
     internal class CrontabScheduleCalculator : IScheduleCalculator
     {
