@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.FileProcessors;
 
-namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
+namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 {
     /// <summary>
     /// Implementation of <see cref="ImageOptimizationProcessorBase"/> using Kraken.IO.

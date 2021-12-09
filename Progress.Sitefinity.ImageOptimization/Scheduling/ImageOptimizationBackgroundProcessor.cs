@@ -8,14 +8,14 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.GenericContent.Model;
-using Telerik.Sitefinity.ImageOptimization.Configuration;
-using Telerik.Sitefinity.ImageOptimization.Utils;
+using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
 using Telerik.Sitefinity.Modules.Libraries;
 
-namespace Telerik.Sitefinity.ImageOptimization.Scheduling
+namespace Progress.Sitefinity.ImageOptimization.Scheduling
 {
     internal class ImageOptimizationBackgroundProcessor
     {

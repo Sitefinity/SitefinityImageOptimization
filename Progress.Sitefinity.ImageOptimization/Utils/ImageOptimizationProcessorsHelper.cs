@@ -4,14 +4,14 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
-using Telerik.Sitefinity.ImageOptimization.FileProcessors;
+using Progress.Sitefinity.ImageOptimization.FileProcessors;
 using Telerik.Sitefinity.Modules.Libraries.Configuration;
 using Telerik.Sitefinity.Processors;
 using Telerik.Sitefinity.Processors.Configuration;
 using Telerik.Sitefinity.Services;
 using Telerik.Sitefinity.Utilities.TypeConverters;
 
-namespace Telerik.Sitefinity.ImageOptimization.Utils
+namespace Progress.Sitefinity.ImageOptimization.Utils
 {
     public static class ImageOptimizationProcessorsHelper
     {

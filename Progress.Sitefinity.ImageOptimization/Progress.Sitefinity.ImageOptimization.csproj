@@ -7,8 +7,8 @@
     <ProjectGuid>{DC579970-A261-4FC3-9270-60E35B658799}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Telerik.Sitefinity.ImageOptimization</RootNamespace>
-    <AssemblyName>Telerik.Sitefinity.ImageOptimization</AssemblyName>
+    <RootNamespace>Progress.Sitefinity.ImageOptimization</RootNamespace>
+    <AssemblyName>Progress.Sitefinity.ImageOptimization</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

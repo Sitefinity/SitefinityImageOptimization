@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package >
   <metadata>
-    <id>Telerik.Sitefinity.ImageOptimization</id>
+    <id>Progress.Sitefinity.ImageOptimization</id>
     <version>1.0.0</version>
-    <title>Telerik.Sitefinity.ImageOptimization</title>
+    <title>Progress.Sitefinity.ImageOptimization</title>
     <authors>Progress Software Corporation</authors>
     <owners>Progress Software Corporation</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Telerik.Sitefinity.ImageOptimization.Utils
+namespace Progress.Sitefinity.ImageOptimization.Utils
 {
     public static class ImageOptimizationConstants
     {

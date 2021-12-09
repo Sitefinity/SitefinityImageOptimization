@@ -6,15 +6,15 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Metadata;
-using Telerik.Sitefinity.ImageOptimization.Configuration;
-using Telerik.Sitefinity.ImageOptimization.Utils;
+using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Metadata.Model;
 using Telerik.Sitefinity.Scheduling;
 using Telerik.Sitefinity.Scheduling.Model;
 using Telerik.Sitefinity.Services;
 
-namespace Telerik.Sitefinity.ImageOptimization.Scheduling
+namespace Progress.Sitefinity.ImageOptimization.Scheduling
 {
     public class ImageOptimizationTask : ScheduledTask
     {

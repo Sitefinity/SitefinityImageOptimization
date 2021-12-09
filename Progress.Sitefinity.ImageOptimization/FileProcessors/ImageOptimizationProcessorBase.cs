@@ -3,10 +3,10 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Telerik.Sitefinity.FileProcessors;
-using Telerik.Sitefinity.ImageOptimization.Utils;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Processors;
 
-namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
+namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 {
     /// <summary>
     /// Base class for image optimization processors. Image optimization processors are used to optimize the size of the image on upload, before saving it.

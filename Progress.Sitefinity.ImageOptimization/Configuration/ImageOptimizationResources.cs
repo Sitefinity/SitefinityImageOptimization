@@ -1,6 +1,6 @@
 ﻿using Telerik.Sitefinity.Localization;
 
-namespace Telerik.Sitefinity.ImageOptimization.Configuration
+namespace Progress.Sitefinity.ImageOptimization.Configuration
 {
     [ObjectInfo("ImageOptimizationResources", ResourceClassId = "ImageOptimizationResources", Title = "ImageOptimizationResourcesTitle", TitlePlural = "ImageOptimizationResourcesTitlePlural", Description = "ImageOptimizationResourcesDescription")]
     public class ImageOptimizationResources : Resource
