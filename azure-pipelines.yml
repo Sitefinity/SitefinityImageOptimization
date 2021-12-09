@@ -32,7 +32,7 @@ stages:
           command: 'restore'
           restoreSolution: 'Sitefinity/SitefinityImageOptimization/**/*.sln'
           feedsToUse: 'config'
-          nugetConfigPath: 'NuGet.Config'
+          nugetConfigPath: 'Sitefinity/SitefinityImageOptimization/NuGet.Config'
           versioningScheme: 'off'
       - task: VSBuild@1
         inputs:
