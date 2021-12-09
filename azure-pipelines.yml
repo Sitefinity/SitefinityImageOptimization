@@ -1,7 +1,16 @@
+resources:
+  repositories:
+  # Clone sitefinity-ci repository to reuse SignNugetPackages function  
+  - repository: sitefinity-ci
+    type: git
+    name: sitefinity-ci
+    ref: master
+
 trigger: none
 
 pool:
-  vmImage: 'windows-latest'
+  name: Sitefinity Core
+  demands: distribution-builds
 
 variables:
   solution: '**/*.sln'
@@ -15,6 +24,8 @@ stages:
     - job: BuildAndPack
       displayName: "Build and Pack"
       steps:
+      - checkout: self
+      - checkout: sitefinity-ci
       - task: NuGetToolInstaller@1
       - task: NuGetCommand@2
         inputs:
@@ -40,6 +51,17 @@ stages:
           packagesToPack: 'Progress.Sitefinity.ImageOptimization/Progress.Sitefinity.ImageOptimization.nuspec'
           versioningScheme: 'off'
           includeReferencedProjects: true
+      - task: PowerShell@2
+        displayName: SignNugetPackage
+        inputs:
+          targetType: inline
+          script: | 
+            . "$(Build.SourcesDirectory)\sitefinity-ci\Distribution\CommonScripts\Config.ps1"
+        
+            $env:configJson = ConvertTo-Json $mainBuildConfig -Depth 5 -Compress
+
+            Import-Module -Name $(Build.SourcesDirectory)\sitefinity-ci\Distribution\DistributionBuildModules\NuGetPackages.psm1 -DisableNameChecking -ArgumentList $env:configJson
+            SignNugetPackages -directory $(Build.ArtifactStagingDirectory)
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'

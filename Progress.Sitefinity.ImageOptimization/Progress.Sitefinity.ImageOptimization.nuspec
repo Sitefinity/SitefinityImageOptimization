@@ -6,7 +6,7 @@
     <title>Progress.Sitefinity.ImageOptimization</title>
     <authors>Progress Software Corporation</authors>
     <owners>Progress Software Corporation</owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <license type="file">LicenseAgreement\License.txt</license>
     <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
     <projectUrl>https://www.progress.com/sitefinity-cms</projectUrl>
@@ -17,8 +17,8 @@
     <tags>Sitefinity Image Optimization</tags>
     <dependencies>
       <dependency id="kraken-net" version="2.0.1" />
-      <dependency id="Tinify" version="2.0.1" />
-      <dependency id="Telerik.Sitefinity.Core" version="12.2.7200" />
+      <dependency id="Tinify" version="1.5.3" />
+      <dependency id="Telerik.Sitefinity.Core" version="14.0.7700" />
     </dependencies>
   </metadata>
   <files>
