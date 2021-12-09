@@ -1,4 +1,4 @@
-End User License Agreement for Telerik.Sitefinity.ImageOptimiziation NuGet Package (“NuGet Package”)
+End User License Agreement for Progress.Sitefinity.ImageOptimiziation NuGet Package (“NuGet Package”)
 
 Last Update: November 8, 2021
 
