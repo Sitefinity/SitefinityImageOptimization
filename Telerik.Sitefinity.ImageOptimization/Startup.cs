@@ -40,41 +40,55 @@ namespace Telerik.Sitefinity.ImageOptimization
 
         private static void Bootstrapper_Bootstrapped(object sender, EventArgs e)
         {
-            IList<IInstallableFileProcessor> imageOptimizationProcessors = new List<IInstallableFileProcessor>()
-            {
-                new KrakenImageOptimizationProcessor(),
-                new TinifyImageOptimizationProcessor()
-            };
-
-            IList<IInstallableFileProcessor> imageOptimizationProcessorsToRegister = new List<IInstallableFileProcessor>();
-            foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
-            {
-                if (!ImageOptimizationProcessorsHelper.IsImageOptimizationProcessorRegistered(imageOptimizationProcessor))
-                {
-                    imageOptimizationProcessorsToRegister.Add(imageOptimizationProcessor);
-                }
-            }
-
-            if (imageOptimizationProcessorsToRegister.Any())
-            {
-                ImageOptimizationProcessorsHelper.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
-            }
-
             Startup.InitializeHelperFields();
+            ImageOptimizationTask.RemoveScheduledTasks();
 
-            Startup.hassImageOptimizationProcessorEnabled = ImageOptimizationProcessorsHelper.ValidateImageOptimizationProcessorsConfigurations();
+            var disableImageOptimizationAppSetting = System.Configuration.ConfigurationManager.AppSettings[ImageOptimizationConstants.DisableImageOptimizationAppSettingKey];
+            bool disableImageOptimization;
 
-            Res.RegisterResource<ImageOptimizationResources>();
-            Config.RegisterSection<ImageOptimizationConfig>();
+            if (!(bool.TryParse(disableImageOptimizationAppSetting, out disableImageOptimization) && disableImageOptimization))
+            {
+                IList<IInstallableFileProcessor> imageOptimizationProcessors = new List<IInstallableFileProcessor>()
+                {
+                    new KrakenImageOptimizationProcessor(),
+                    new TinifyImageOptimizationProcessor()
+                };
 
-            Startup.RegisterCrontabTasks();
+                IList<IInstallableFileProcessor> imageOptimizationProcessorsToRegister = new List<IInstallableFileProcessor>();
+                foreach (var imageOptimizationProcessor in imageOptimizationProcessors)
+                {
+                    if (!ImageOptimizationProcessorsHelper.IsImageOptimizationProcessorRegistered(imageOptimizationProcessor))
+                    {
+                        imageOptimizationProcessorsToRegister.Add(imageOptimizationProcessor);
+                    }
+                }
+
+                if (imageOptimizationProcessorsToRegister.Any())
+                {
+                    ImageOptimizationProcessorsHelper.RegisterImageOptimizationProcessors(imageOptimizationProcessorsToRegister);
+                }
+
+
+                Startup.hassImageOptimizationProcessorEnabled = ImageOptimizationProcessorsHelper.ValidateImageOptimizationProcessorsConfigurations();
+
+                Res.RegisterResource<ImageOptimizationResources>();
+                Config.RegisterSection<ImageOptimizationConfig>();
+
+                Startup.RegisterCrontabTasks();
+            }
         }
 
         private static void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
         {
-            if (e.CommandName == "Bootstrapped")
+            var disableImageOptimizationAppSetting = System.Configuration.ConfigurationManager.AppSettings[ImageOptimizationConstants.DisableImageOptimizationAppSettingKey];
+            bool disableImageOptimization;
+
+            if (!(bool.TryParse(disableImageOptimizationAppSetting, out disableImageOptimization) && disableImageOptimization))
             {
-                EventHub.Subscribe<IDataEvent>(Content_Action);
+                if (e.CommandName == "Bootstrapped")
+                {
+                    EventHub.Subscribe<IDataEvent>(Content_Action);
+                }
             }
         }
 
@@ -112,14 +126,14 @@ namespace Telerik.Sitefinity.ImageOptimization
                 if (image.Status == ContentLifecycleStatus.Master)
                 {
                     var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
-                    imageTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
                     manager.Lifecycle.CheckIn(imageTemp);
                 }
                 else if (image.Status == ContentLifecycleStatus.Temp)
                 {
-                    image.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
                     Image master = manager.Lifecycle.GetMaster(image) as Image;
-                    master.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
                 }
 
                 manager.SaveChanges();
@@ -143,14 +157,14 @@ namespace Telerik.Sitefinity.ImageOptimization
 
             var propertyChangeDataEvent = @event as IPropertyChangeDataEvent;
 
-            if (propertyChangeDataEvent == null || (!propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == "Thumbnails") && !propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName)))
+            if (propertyChangeDataEvent == null || (!propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == "Thumbnails") && !propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName)))
             {
                 return false;
             }
 
-            if(propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName))
+            if(propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName))
             {
-                var changedIsOptimized = propertyChangeDataEvent.ChangedProperties.FirstOrDefault(p => p.Key == ImageOptimizationFieldBuilder.IsOptimizedFieldName);
+                var changedIsOptimized = propertyChangeDataEvent.ChangedProperties.FirstOrDefault(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName);
 
                 if ((bool)changedIsOptimized.Value.NewValue == Startup.hassImageOptimizationProcessorEnabled)
                 {

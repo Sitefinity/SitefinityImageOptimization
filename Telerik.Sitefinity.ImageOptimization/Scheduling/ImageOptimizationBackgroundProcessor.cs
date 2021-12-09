@@ -14,8 +14,6 @@ using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
 using Telerik.Sitefinity.Modules.Libraries;
-using Telerik.Sitefinity.SiteSync.Configuration;
-using Telerik.Sitefinity.SiteSync.Data;
 
 namespace Telerik.Sitefinity.ImageOptimization.Scheduling
 {
@@ -27,13 +25,10 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
             ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
             this.batchSize = imageOptimizationConfig.BatchSize;
             this.enableDetailedLogging = imageOptimizationConfig.EnableDetailLogging;
-            this.enabledSiteSync = CheckSiteSyncStatus();
         }
 
         internal void ProcessImages()
         {
-            this.processStart = DateTime.UtcNow;
-
             foreach (var provider in this.Providers)
             {
                 try
@@ -61,7 +56,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
             bool itemsProcessed = false;
             int processedImages = 0;
 
-            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && !i.GetValue<bool>(ImageOptimizationFieldBuilder.IsOptimizedFieldName)).Take(this.batchSize);
+            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName)).Take(this.batchSize);
 
             foreach (var image in images)
                     {
@@ -75,7 +70,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
                             Stream sourceImageStream = librariesManager.Download(image.Id);
                             librariesManager.Upload(temp, sourceImageStream, image.Extension, true);
 
-                            temp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                            temp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
 
                             master = librariesManager.Lifecycle.CheckIn(temp) as Image;
 
@@ -84,11 +79,6 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
                             if (master.ApprovalWorkflowState == "Published")
                             {
                                 librariesManager.Lifecycle.Publish(master);
-                            }
-
-                            if (this.enabledSiteSync)
-                            {
-                                this.SiteSyncUpdatedItems.Add(master.Id.ToString());
                             }
 
                             this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
@@ -111,8 +101,6 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
                     }
 
                     TransactionManager.CommitTransaction(transactionName);
-
-                    this.ClearSiteSyncLogEntries();
 
             return itemsProcessed;
         }
@@ -143,7 +131,7 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
 
                             Stream translationSourceImageStream = librariesManager.Download(linkItem.MediaContentId);
                             librariesManager.Upload(translatedTemp, translationSourceImageStream, image.Extension, false);
-                            translatedTemp.SetValue(ImageOptimizationFieldBuilder.IsOptimizedFieldName, true);
+                            translatedTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
 
                             translatedMaster = librariesManager.Lifecycle.CheckIn(translatedTemp) as Image;
 
@@ -162,23 +150,6 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
                         }
                     }
                 }
-            }
-        }
-
-        private void ClearSiteSyncLogEntries()
-        {
-            if (this.enabledSiteSync && this.SiteSyncUpdatedItems.Count > 0)
-            {
-                SiteSyncManager syncManager = SiteSyncManager.GetManager();
-                var entriesToDelete = syncManager.GetLogEntries().Where(le => le.ModifiedSinceLastSync && le.TypeName == typeof(Image).ToString());
-                entriesToDelete = entriesToDelete.Where(le => le.Timestamp > this.processStart && this.SiteSyncUpdatedItems.Contains(le.ItemId));
-
-                foreach (var entry in entriesToDelete)
-                {
-                    syncManager.DeleteLogEntry(entry);
-                }
-
-                syncManager.SaveChanges();
             }
         }
 
@@ -212,30 +183,6 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
             }
         }
 
-        private bool CheckSiteSyncStatus()
-        {
-            bool enabledSiteSync = false;
-
-            if (ObjectFactory.GetArgsByName(typeof(SiteSyncConfig).Name, typeof(SiteSyncConfig)) == null)
-            {
-                return enabledSiteSync;
-            }
-
-            SiteSyncConfig siteSyncConfig = Config.Get<SiteSyncConfig>();
-
-            foreach (var receivingServer in siteSyncConfig.ReceivingServers.Values)
-            {
-                if (!string.IsNullOrEmpty(receivingServer.ServerAddress))
-                {
-                    enabledSiteSync = true;
-                    break;
-                }
-            }
-
-            return enabledSiteSync;
-        }
-
-
         internal IEnumerable<string> Providers
         {
             get
@@ -249,25 +196,9 @@ namespace Telerik.Sitefinity.ImageOptimization.Scheduling
             }
         }
 
-        internal IList<string> SiteSyncUpdatedItems
-        {
-            get
-            {
-                if (this.siteSyncUpdatedItems == null)
-                {
-                    this.siteSyncUpdatedItems = new List<string>();
-                }
-
-                return this.siteSyncUpdatedItems;
-            }
-        }
-
         private int batchSize;
         private bool enableDetailedLogging;
-        private bool enabledSiteSync;
         private StringBuilder logTraceBuilder;
         private IEnumerable<string> providers;
-        private IList<string> siteSyncUpdatedItems;
-        private DateTime processStart;
     }
 }

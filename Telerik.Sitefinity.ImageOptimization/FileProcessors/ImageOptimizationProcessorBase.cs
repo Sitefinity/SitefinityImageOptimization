@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Telerik.Sitefinity.FileProcessors;
+using Telerik.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Processors;
 
 namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
@@ -63,6 +64,14 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
         /// <inheritdoc />
         public virtual bool CanProcessFile(FileProcessorInput fileInput)
         {
+            var disableImageOptimizationAppSetting = System.Configuration.ConfigurationManager.AppSettings[ImageOptimizationConstants.DisableImageOptimizationAppSettingKey];
+            bool disableImageOptimization;
+
+            if (bool.TryParse(disableImageOptimizationAppSetting, out disableImageOptimization) && disableImageOptimization)
+            {
+                return false;
+            }
+
             if (!this.hasInitialized || fileInput == null)
             {
                 return false;
