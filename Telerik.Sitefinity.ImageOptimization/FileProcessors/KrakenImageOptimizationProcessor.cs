@@ -43,6 +43,7 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
                 configParameters.Add(KrakenImageOptimizationProcessor.LossyCompressionConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.PreserveMetadataConfigName, "");
                 configParameters.Add(KrakenImageOptimizationProcessor.TimeoutConfigName, "");
+                configParameters.Add(KrakenImageOptimizationProcessor.WebpCompressionConfigName, "");
 
                 return configParameters;
             }
@@ -66,6 +67,12 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
             if (!string.IsNullOrWhiteSpace(preserveMetadataString))
             {
                 this.preserveMetadata = bool.Parse(preserveMetadataString);
+            }
+
+            string webpCompressionString = config[KrakenImageOptimizationProcessor.WebpCompressionConfigName];
+            if (!string.IsNullOrWhiteSpace(webpCompressionString))
+            {
+                this.webpCompression = bool.Parse(webpCompressionString);
             }
 
             string apiKey = config[KrakenImageOptimizationProcessor.ApiKeyConfigName];
@@ -111,6 +118,8 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
                 optimizeUploadWaitRequest.PreserveMeta = new PreserveMeta[] { PreserveMeta.Profile, PreserveMeta.Geotag, PreserveMeta.Date, PreserveMeta.Copyright, PreserveMeta.Orientation };
             }
 
+            optimizeUploadWaitRequest.WebP = this.webpCompression;
+
             using (var timeoutCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutDurationInSeconds)))
             {
                 try
@@ -123,6 +132,12 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
                     }
 
                     Stream stream = this.GetImageStream(response.Body.KrakedUrl);
+
+                    if (this.webpCompression)
+                    {
+                        fileInput.FileExtension = ".webp";
+                        fileInput.MimeType = "image/webp";
+                    }
 
                     return stream;
                 }
@@ -179,6 +194,8 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
 
         private bool preserveMetadata;
 
+        private bool webpCompression;
+
         private int timeoutDurationInSeconds;
 
         private Client client;
@@ -190,6 +207,8 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
         private const string LossyCompressionConfigName = "LossyCompression";
 
         private const string PreserveMetadataConfigName = "PreserveMetadata";
+
+        private const string WebpCompressionConfigName = "WebpCompression";
 
         private const string TimeoutConfigName = "TimeoutAfter";
 
