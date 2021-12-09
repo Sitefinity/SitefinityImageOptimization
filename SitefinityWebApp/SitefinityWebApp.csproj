@@ -901,20 +901,6 @@
     <Reference Include="Twitterizer2, Version=2.4.1.27318, Culture=neutral, PublicKeyToken=69d1469eac671567, processorArchitecture=MSIL">
       <HintPath>..\packages\Telerik.Sitefinity.Twitterizer.2.4.1\lib\net40\Twitterizer2.dll</HintPath>
     </Reference>
-    <Reference Include="RazorGenerator.Templating">
-      <HintPath>bin\RazorGenerator.Templating.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
-    </Reference>
-    <!-- The reference to Telerik.Sitefinity.Audit.ElasticSearch comes from integration build with GIT. 
-	     The module also requires references to Elasticsearch.Net.dll and NEST.dll
-		 The source and additional info of the module can be found on the following Git repository:
-		 https://github.com/Sitefinity/ElasticsearchAuditLogger -->
-    <Reference Include="RazorGenerator.Mvc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\RazorGenerator.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0.3\lib\net40\WebActivatorEx.dll</HintPath>
     </Reference>

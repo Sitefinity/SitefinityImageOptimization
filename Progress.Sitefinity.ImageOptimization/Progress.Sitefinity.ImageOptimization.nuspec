@@ -7,7 +7,7 @@
     <authors>Progress Software Corporation</authors>
     <owners>Progress Software Corporation</owners>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <license type="file">LicenseAgreement\License.txt</license>
+    <license type="file">License.txt</license>
     <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
     <projectUrl>https://www.progress.com/sitefinity-cms</projectUrl>
     <iconUrl>http://nuget.sitefinity.com/img/progresslogo.png</iconUrl>
