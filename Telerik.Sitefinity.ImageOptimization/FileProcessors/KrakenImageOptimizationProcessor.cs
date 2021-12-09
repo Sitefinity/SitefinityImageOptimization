@@ -21,7 +21,7 @@ namespace Telerik.Sitefinity.ImageOptimization.FileProcessors
         {
             get
             {
-                return "Karken IO Image Optimization";
+                return "Kraken IO Image Optimization";
             }
         }
 
