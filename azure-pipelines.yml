@@ -48,7 +48,7 @@ stages:
         inputs:
           command: 'pack'
           feedsToUse: 'select'
-          packagesToPack: 'SitefinityImageOptimization/Progress.Sitefinity.ImageOptimization/Progress.Sitefinity.ImageOptimization.nuspec'
+          packagesToPack: 'SitefinityImageOptimization/Progress.Sitefinity.ImageOptimization/Progress.Sitefinity.ImageOptimization.csproj'
           versioningScheme: 'off'
           includeReferencedProjects: true
       - task: PowerShell@2
