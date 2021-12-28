@@ -1,5 +1,9 @@
 resources:
   repositories:
+  - repository: Pipelines
+    type: git
+    name: sf-cloud-pipelines
+    trigger: none
   # Clone sitefinity-ci repository to reuse SignNugetPackages function  
   - repository: sitefinity-ci
     type: git
@@ -67,3 +71,7 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
+  - template: DeployNugetPackageToSitefinityFeedTemplate.yaml@Pipelines
+    parameters:
+      pushNugetPackageEnvironmentName: "ProgressSitefinityCloud NuGet Push"
+      packagesToPush: "$(Pipeline.Workspace)/drop/**/*.nupkg;!$(Pipeline.Workspace)/drop/**/*.symbols.nupkg"
