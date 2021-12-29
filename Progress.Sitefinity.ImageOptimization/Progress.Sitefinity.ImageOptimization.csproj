@@ -354,9 +354,6 @@
     <Reference Include="Telerik.OpenAccess.Runtime, Version=2020.0.428.1, Culture=neutral, PublicKeyToken=7ce17eeaf1d59342, processorArchitecture=MSIL">
       <HintPath>..\packages\Telerik.DataAccess.Core.2020.0.428.1\lib\net40\Telerik.OpenAccess.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Telerik.OpenAccess.Sync, Version=2018.0.1127.2, Culture=neutral, PublicKeyToken=563ab8ea49361608, processorArchitecture=MSIL">
-      <HintPath>..\packages\Telerik.Sitefinity.OpenAccess.12.2.7200\lib\net472\Telerik.OpenAccess.Sync.dll</HintPath>
-    </Reference>
     <Reference Include="Telerik.OpenAccess.Web, Version=2020.0.428.1, Culture=neutral, PublicKeyToken=7ce17eeaf1d59342, processorArchitecture=MSIL">
       <HintPath>..\packages\Telerik.DataAccess.Web35.2020.0.428.1\lib\net20\Telerik.OpenAccess.Web.dll</HintPath>
     </Reference>
