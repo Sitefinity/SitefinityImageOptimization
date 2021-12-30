@@ -8,7 +8,9 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Telerik.Sitefinity.Abstractions;
+using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.FileProcessors;
+using Telerik.Sitefinity.Modules.Libraries.Configuration;
 
 namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 {
@@ -52,27 +54,34 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
         /// <inheritdoc />
         protected override bool InitializeOverride(NameValueCollection config)
         {
-            if (config == null)
+            var configFileProcessors = Config.Get<LibrariesConfig>().GetConfigProcessors();
+            var processor = configFileProcessors[this.Name];
+            var processorConfig = processor.Parameters;
+
+            if (processorConfig == null)
             {
                 return false;
             }
 
-            string lossyCompressionString = config[KrakenImageOptimizationProcessor.LossyCompressionConfigName];
-            if (!string.IsNullOrWhiteSpace(lossyCompressionString))
+            string lossyCompressionString = processorConfig[KrakenImageOptimizationProcessor.LossyCompressionConfigName];
+            bool lossyCompressionValue;
+            if (!string.IsNullOrWhiteSpace(lossyCompressionString) && bool.TryParse(lossyCompressionString, out lossyCompressionValue))
             {
-                this.lossyCompression = bool.Parse(lossyCompressionString);
+                this.lossyCompression = lossyCompressionValue;
             }
 
-            string preserveMetadataString = config[KrakenImageOptimizationProcessor.PreserveMetadataConfigName];
-            if (!string.IsNullOrWhiteSpace(preserveMetadataString))
+            string preserveMetadataString = processorConfig[KrakenImageOptimizationProcessor.PreserveMetadataConfigName];
+            bool preserveMetadataValue;
+            if (!string.IsNullOrWhiteSpace(preserveMetadataString) && bool.TryParse(preserveMetadataString, out preserveMetadataValue))
             {
-                this.preserveMetadata = bool.Parse(preserveMetadataString);
+                this.preserveMetadata = preserveMetadataValue;
             }
 
-            string webpCompressionString = config[KrakenImageOptimizationProcessor.WebpCompressionConfigName];
-            if (!string.IsNullOrWhiteSpace(webpCompressionString))
+            string webpCompressionString = processorConfig[KrakenImageOptimizationProcessor.WebpCompressionConfigName];
+            bool webpCompressionValue;
+            if (!string.IsNullOrWhiteSpace(webpCompressionString) && bool.TryParse(webpCompressionString, out webpCompressionValue))
             {
-                this.webpCompression = bool.Parse(webpCompressionString);
+                this.webpCompression = webpCompressionValue;
             }
 
             string apiKey = config[KrakenImageOptimizationProcessor.ApiKeyConfigName];
