@@ -56,51 +56,51 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
             bool itemsProcessed = false;
             int processedImages = 0;
 
-            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName)).Take(this.batchSize);
+            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && ((i.GetValue<object>(ImageOptimizationConstants.IsOptimizedFieldName) == null) || !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName))).Take(this.batchSize);
 
             foreach (var image in images)
+            {
+                try
+                {
+                    this.BuildTrace(string.Format("{0} - Attempting to optimize image {1} ({2})", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
+
+                    Image master = image;
+                    Image temp = librariesManager.Lifecycle.CheckOut(image) as Image;
+
+                    Stream sourceImageStream = librariesManager.Download(image.Id);
+                    librariesManager.Upload(temp, sourceImageStream, image.Extension, true);
+
+                    temp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
+
+                    master = librariesManager.Lifecycle.CheckIn(temp) as Image;
+
+                    ProcessReplacedImageTranslations(librariesManager, master);
+
+                    if (master.ApprovalWorkflowState == "Published")
                     {
-                        try
-                        {
-                            this.BuildTrace(string.Format("{0} - Attempting to optimize image {1} ({2})", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
-
-                            Image master = image;
-                            Image temp = librariesManager.Lifecycle.CheckOut(image) as Image;
-
-                            Stream sourceImageStream = librariesManager.Download(image.Id);
-                            librariesManager.Upload(temp, sourceImageStream, image.Extension, true);
-
-                            temp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
-
-                            master = librariesManager.Lifecycle.CheckIn(temp) as Image;
-
-                            ProcessReplacedImageTranslations(librariesManager, master);
-
-                            if (master.ApprovalWorkflowState == "Published")
-                            {
-                                librariesManager.Lifecycle.Publish(master);
-                            }
-
-                            this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
-
-                            if (processedImages % 5 == 0)
-                            {
-                                TransactionManager.CommitTransaction(transactionName);
-                            }
-
-                            processedImages += 1;
-                        }
-                        catch (Exception ex)
-                        {
-                            this.BuildTrace(string.Format("Optimization of image {0} ({1}) failed with exception {2}", image.Title, image.Id, ex.Message), true);
-                        }
-
-                        this.WriteTraceLog();
-
-                        itemsProcessed = true;
+                        librariesManager.Lifecycle.Publish(master);
                     }
 
-                    TransactionManager.CommitTransaction(transactionName);
+                    this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
+
+                    if (processedImages % 5 == 0)
+                    {
+                        TransactionManager.CommitTransaction(transactionName);
+                    }
+
+                    processedImages += 1;
+                }
+                catch (Exception ex)
+                {
+                    this.BuildTrace(string.Format("Optimization of image {0} ({1}) failed with exception {2}", image.Title, image.Id, ex.Message), true);
+                }
+
+                this.WriteTraceLog();
+
+                itemsProcessed = true;
+            }
+
+            TransactionManager.CommitTransaction(transactionName);
 
             return itemsProcessed;
         }
