@@ -1,5 +1,9 @@
 resources:
   repositories:
+  - repository: Pipelines
+    type: git
+    name: sf-cloud-pipelines
+    trigger: none
   # Clone sitefinity-ci repository to reuse SignNugetPackages function  
   - repository: sitefinity-ci
     type: git
@@ -48,7 +52,7 @@ stages:
         inputs:
           command: 'pack'
           feedsToUse: 'select'
-          packagesToPack: 'SitefinityImageOptimization/Progress.Sitefinity.ImageOptimization/Progress.Sitefinity.ImageOptimization.nuspec'
+          packagesToPack: 'SitefinityImageOptimization/Progress.Sitefinity.ImageOptimization/Progress.Sitefinity.ImageOptimization.csproj'
           versioningScheme: 'off'
           includeReferencedProjects: true
       - task: PowerShell@2
@@ -67,3 +71,7 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
+  - template: DeployNugetPackageToSitefinityFeedTemplate.yaml@Pipelines
+    parameters:
+      pushNugetPackageEnvironmentName: "ProgressSitefinityCloud NuGet Push"
+      packagesToPush: "$(Pipeline.Workspace)/drop/**/*.nupkg;!$(Pipeline.Workspace)/drop/**/*.symbols.nupkg"

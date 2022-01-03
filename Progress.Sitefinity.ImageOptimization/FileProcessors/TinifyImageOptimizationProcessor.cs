@@ -4,7 +4,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Telerik.Sitefinity.Abstractions;
+using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.FileProcessors;
+using Telerik.Sitefinity.Modules.Libraries.Configuration;
 using TinifyAPI;
 
 namespace Progress.Sitefinity.ImageOptimization.FileProcessors
@@ -45,18 +47,23 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 
         protected override bool InitializeOverride(NameValueCollection config)
         {
-            if (config == null)
+            var configFileProcessors = Config.Get<LibrariesConfig>().GetConfigProcessors();
+            var processor = configFileProcessors[this.Name];
+            var processorConfig = processor.Parameters;
+
+            if (processorConfig == null)
             {
                 return false;
             }
 
-            string preserveMetadataString = config[TinifyImageOptimizationProcessor.PreserveMetadataConfigName];
-            if (!string.IsNullOrWhiteSpace(preserveMetadataString))
+            string preserveMetadataString = processorConfig[TinifyImageOptimizationProcessor.PreserveMetadataConfigName];
+            bool preserveMetadataValue;
+            if (!string.IsNullOrWhiteSpace(preserveMetadataString) && bool.TryParse(preserveMetadataString, out preserveMetadataValue))
             {
-                this.preserveMetadata = bool.Parse(preserveMetadataString);
+                this.preserveMetadata = preserveMetadataValue;
             }
 
-            string apiKey = config[TinifyImageOptimizationProcessor.ApiKeyConfigName];
+            string apiKey = processorConfig[TinifyImageOptimizationProcessor.ApiKeyConfigName];
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
@@ -64,7 +71,7 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
             }
 
             int timeout;
-            if (int.TryParse(config[TinifyImageOptimizationProcessor.TimeoutConfigName], out timeout))
+            if (int.TryParse(processorConfig[TinifyImageOptimizationProcessor.TimeoutConfigName], out timeout))
             {
                 timeoutDurationInSeconds = timeout;
             }

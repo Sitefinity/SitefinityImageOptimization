@@ -41,7 +41,7 @@ namespace Progress.Sitefinity.ImageOptimization.Utils
                         var checkType = TypeResolutionService.ResolveType(configFileProcessorsElement.Type, true);
                         IProcessor instance = (IProcessor)ObjectFactory.Resolve(checkType);
 
-                        instance.Initialize(configFileProcessorsElement.Name, new NameValueCollection(configFileProcessorsElement.Parameters));
+                        instance.Initialize(configFileProcessorsElement.Name, configFileProcessorsElement.Parameters);
 
                         var installableFileProcessor = instance as IInstallableFileProcessor;
 
