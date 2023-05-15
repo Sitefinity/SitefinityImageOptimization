@@ -13,13 +13,16 @@ resources:
 trigger: none
 
 pool:
-  name: Sitefinity Core
-  demands: distribution-builds
+  name: Sitefinity Core - Azure Scale Set
 
 variables:
-  solution: 'SitefinityImageOptimization/**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+- group: DistributionBuild_Signing
+- name: solution
+  value: 'SitefinityImageOptimization/**/*.sln'
+- name: buildPlatform
+  value: 'Any CPU'
+- name: buildConfiguration
+  value: 'Release'
 
 stages:
   - stage: "BuildAndPack"
@@ -30,6 +33,19 @@ stages:
       steps:
       - checkout: self
       - checkout: sitefinity-ci
+      - task: DownloadSecureFile@1
+        name: SigningCertificate
+        displayName: Download CA certificate
+        inputs:
+          secureFile: 'ProgressCodeSign.pfx'
+      - task: PowerShell@2
+        displayName: Install CA Cert
+        inputs:
+          targetType: 'inline'
+          script: |
+            Write-Host Installing $(SigningCertificate.secureFilePath) to the trusted CA directory...
+            $caSecString = ConvertTo-SecureString '$(caPwd)' -AsPlainText -Force 
+            Import-PfxCertificate -FilePath $(SigningCertificate.secureFilePath) -CertStoreLocation Cert:\LocalMachine\My -Password $caSecString     
       - task: NuGetToolInstaller@1
       - task: NuGetCommand@2
         inputs:
@@ -71,6 +87,14 @@ stages:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
+      - task: PowerShell@2
+        displayName: Remove CA certificate
+        inputs:
+          targetType: inline
+          script: |
+            . "$(Build.SourcesDirectory)\sitefinity-ci\Distribution\CommonScripts\Config.ps1"
+            Get-ChildItem Cert:\LocalMachine\My | Where-Object { $_.Thumbprint -eq $commonConfig.Signing.sha1Hash } | Remove-Item
+  
   - template: DeployNugetPackageToSitefinityFeedTemplate.yaml@Pipelines
     parameters:
       pushNugetPackageEnvironmentName: "ProgressSitefinityCloud NuGet Push"
