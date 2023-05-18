@@ -17,6 +17,7 @@ pool:
 
 variables:
 - group: DistributionBuild_Signing
+- group: Sitefinity CI Credentials
 - name: solution
   value: 'SitefinityImageOptimization/**/*.sln'
 - name: buildPlatform
