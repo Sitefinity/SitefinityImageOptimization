@@ -1,4 +1,7 @@
 # Sitefinity Image Optimization
+
+### This repository is not automatically upgraded to latest Sitefintiy version. The repository is monitored for pull requests and fixes. The latest official version of Sitefinity that supports this sample is 8.1. Be aware that using a higher version could cause unexpected behavior. If you successfully upgrade the example to a greater version, please share your work with the community by submitting your changes via pull request.
+
 This repository contains an example project that uses third party services like [Kraken IO](https://kraken.io/) and [Tinify](https://tinypng.com/) to automatically optimize images in Sitefinity CMS.
 
 ## How to setup
