@@ -84,8 +84,8 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 this.webpCompression = webpCompressionValue;
             }
 
-            string apiKey = config[KrakenImageOptimizationProcessor.ApiKeyConfigName];
-            string apiSecret = config[KrakenImageOptimizationProcessor.ApiSecretConfigName];
+            string apiKey = processorConfig[KrakenImageOptimizationProcessor.ApiKeyConfigName];
+            string apiSecret = processorConfig[KrakenImageOptimizationProcessor.ApiSecretConfigName];
 
             if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(apiSecret))
             {
