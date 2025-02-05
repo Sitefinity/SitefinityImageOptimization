@@ -113,9 +113,9 @@ namespace Progress.Sitefinity.ImageOptimization
 
                 ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
 
-                LibrariesManager manager = ManagerBase.GetMappedManager(contentType, providerName) as LibrariesManager;
+                LibrariesManager manager = ManagerBase.GetMappedManagerInTransaction(contentType, providerName, Guid.NewGuid().ToString()) as LibrariesManager;
 
-                if(manager == null)
+                if (manager == null)
                 {
                     return;
                 }
@@ -136,7 +136,7 @@ namespace Progress.Sitefinity.ImageOptimization
                     master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
                 }
 
-                manager.SaveChanges();
+                TransactionManager.CommitTransaction(manager.TransactionName);
 
             }
             catch (Exception ex)
