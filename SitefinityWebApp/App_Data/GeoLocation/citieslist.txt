@@ -7402,83 +7402,83 @@ Boeung	Kampong Thom	Cambodia
 Russey	Battambang	Cambodia
 Sihanoukville	Preah Sihanouk	Cambodia
 Cambodia
-Yongin-si	Gyeonggi-do	Republic of Korea
-Yeoju	Gyeonggi-do	Republic of Korea
-Yangsan	Gyeongsangnam-do	Republic of Korea
-Yangp'yong	Gyeonggi-do	Republic of Korea
-Wonju	Gangwon-do	Republic of Korea
-Wando	Jeollanam-do	Republic of Korea
-Chilgok	Gyeongsangbuk-do	Republic of Korea
-Ulsan	Ulsan	Republic of Korea
-Ulchin	Gyeongsangbuk-do	Republic of Korea
-Uijeongbu-si	Gyeonggi-do	Republic of Korea
-Daejeon	Daejeon	Republic of Korea
-Daegu	Daegu	Republic of Korea
-Taebuk	Gyeongsangbuk-do	Republic of Korea
-T'aebaek	Gangwon-do	Republic of Korea
-Suwon-si	Gyeonggi-do	Republic of Korea
-Suncheon	Jeollanam-do	Republic of Korea
-Republic of Korea
-Seoul	Seoul	Republic of Korea
-Songjeong	Gyeonggi-do	Republic of Korea
-Sokcho	Gangwon-do	Republic of Korea
-Songang	Seoul	Republic of Korea
-Seocho	Seoul	Republic of Korea
-Sasang	Jeollanam-do	Republic of Korea
-Gwangmyeong	Incheon	Republic of Korea
-Pyeongtaek	Gyeonggi-do	Republic of Korea
-Busan	Busan	Republic of Korea
-Bucheon-si	Gyeonggi-do	Republic of Korea
-Pohang	Gyeongsangbuk-do	Republic of Korea
-Poch'on	Jeollanam-do	Republic of Korea
-Osan	Gyeonggi-do	Republic of Korea
-Asan	Chungcheongnam-do	Republic of Korea
-Nonsan	Chungcheongnam-do	Republic of Korea
-Naju	Jeollanam-do	Republic of Korea
-Nae-ri	Jeollanam-do	Republic of Korea
-Paju	Gyeonggi-do	Republic of Korea
-Moppo	Jeollanam-do	Republic of Korea
-Miryang	Gyeongsangnam-do	Republic of Korea
-Mapo-dong	Seoul	Republic of Korea
-Gyeongsan-si	Gyeongsangbuk-do	Republic of Korea
-Gyeongju	Gyeongsangbuk-do	Republic of Korea
-Kwangyang	Jeollanam-do	Republic of Korea
-Gwangju	Gwangju	Republic of Korea
-Kwach'on	Gyeonggi-do	Republic of Korea
-Gunsan	Jeollabuk-do	Republic of Korea
-Tang-ni	Gyeonggi-do	Republic of Korea
-Gumi	Gyeongsangbuk-do	Republic of Korea
-Gongju	Chungcheongnam-do	Republic of Korea
-Kisa	Chungcheongnam-do	Republic of Korea
-Gimhae	Gyeongsangnam-do	Republic of Korea
-Garakdong	Seoul	Republic of Korea
-Gangwon-do	Republic of Korea
-Gangneung	Gangwon-do	Republic of Korea
-Iksan	Jeollabuk-do	Republic of Korea
-Inje	Gangwon-do	Republic of Korea
-Incheon	Incheon	Republic of Korea
-Icheon-si	Gyeonggi-do	Republic of Korea
-Hyangyang	Gyeongsangnam-do	Republic of Korea
-Hwaseong-si	Gyeonggi-do	Republic of Korea
-Hwacheon	Gangwon-do	Republic of Korea
-Haeundae	Busan	Republic of Korea
-Hadong	Gyeongsangnam-do	Republic of Korea
-Jungpyong	Chungcheongbuk-do	Republic of Korea
-Chungnim	Jeollanam-do	Republic of Korea
-Chungju	Chungcheongbuk-do	Republic of Korea
-Chuncheon	Gangwon-do	Republic of Korea
-Jeonju	Jeollabuk-do	Republic of Korea
-Jeongeup-si	Jeollabuk-do	Republic of Korea
-Cheongju-si	Chungcheongbuk-do	Republic of Korea
-Cheonan	Chungcheongnam-do	Republic of Korea
-Jinju	Gyeongsangnam-do	Republic of Korea
-Jeju-si	Jeju-do	Republic of Korea
-Jecheon	Chungcheongbuk-do	Republic of Korea
-Changwon	Gyeongsangnam-do	Republic of Korea
-Anyang-si	Gyeonggi-do	Republic of Korea
-Anseong	Gyeonggi-do	Republic of Korea
-Ansan-si	Gyeonggi-do	Republic of Korea
-Andong	Gyeongsangbuk-do	Republic of Korea
+Yongin-si	Gyeonggi-do	South Korea
+Yeoju	Gyeonggi-do	South Korea
+Yangsan	Gyeongsangnam-do	South Korea
+Yangp'yong	Gyeonggi-do	South Korea
+Wonju	Gangwon-do	South Korea
+Wando	Jeollanam-do	South Korea
+Chilgok	Gyeongsangbuk-do	South Korea
+Ulsan	Ulsan	South Korea
+Ulchin	Gyeongsangbuk-do	South Korea
+Uijeongbu-si	Gyeonggi-do	South Korea
+Daejeon	Daejeon	South Korea
+Daegu	Daegu	South Korea
+Taebuk	Gyeongsangbuk-do	South Korea
+T'aebaek	Gangwon-do	South Korea
+Suwon-si	Gyeonggi-do	South Korea
+Suncheon	Jeollanam-do	South Korea
+South Korea
+Seoul	Seoul	South Korea
+Songjeong	Gyeonggi-do	South Korea
+Sokcho	Gangwon-do	South Korea
+Songang	Seoul	South Korea
+Seocho	Seoul	South Korea
+Sasang	Jeollanam-do	South Korea
+Gwangmyeong	Incheon	South Korea
+Pyeongtaek	Gyeonggi-do	South Korea
+Busan	Busan	South Korea
+Bucheon-si	Gyeonggi-do	South Korea
+Pohang	Gyeongsangbuk-do	South Korea
+Poch'on	Jeollanam-do	South Korea
+Osan	Gyeonggi-do	South Korea
+Asan	Chungcheongnam-do	South Korea
+Nonsan	Chungcheongnam-do	South Korea
+Naju	Jeollanam-do	South Korea
+Nae-ri	Jeollanam-do	South Korea
+Paju	Gyeonggi-do	South Korea
+Moppo	Jeollanam-do	South Korea
+Miryang	Gyeongsangnam-do	South Korea
+Mapo-dong	Seoul	South Korea
+Gyeongsan-si	Gyeongsangbuk-do	South Korea
+Gyeongju	Gyeongsangbuk-do	South Korea
+Kwangyang	Jeollanam-do	South Korea
+Gwangju	Gwangju	South Korea
+Kwach'on	Gyeonggi-do	South Korea
+Gunsan	Jeollabuk-do	South Korea
+Tang-ni	Gyeonggi-do	South Korea
+Gumi	Gyeongsangbuk-do	South Korea
+Gongju	Chungcheongnam-do	South Korea
+Kisa	Chungcheongnam-do	South Korea
+Gimhae	Gyeongsangnam-do	South Korea
+Garakdong	Seoul	South Korea
+Gangwon-do	South Korea
+Gangneung	Gangwon-do	South Korea
+Iksan	Jeollabuk-do	South Korea
+Inje	Gangwon-do	South Korea
+Incheon	Incheon	South Korea
+Icheon-si	Gyeonggi-do	South Korea
+Hyangyang	Gyeongsangnam-do	South Korea
+Hwaseong-si	Gyeonggi-do	South Korea
+Hwacheon	Gangwon-do	South Korea
+Haeundae	Busan	South Korea
+Hadong	Gyeongsangnam-do	South Korea
+Jungpyong	Chungcheongbuk-do	South Korea
+Chungnim	Jeollanam-do	South Korea
+Chungju	Chungcheongbuk-do	South Korea
+Chuncheon	Gangwon-do	South Korea
+Jeonju	Jeollabuk-do	South Korea
+Jeongeup-si	Jeollabuk-do	South Korea
+Cheongju-si	Chungcheongbuk-do	South Korea
+Cheonan	Chungcheongnam-do	South Korea
+Jinju	Gyeongsangnam-do	South Korea
+Jeju-si	Jeju-do	South Korea
+Jecheon	Chungcheongbuk-do	South Korea
+Changwon	Gyeongsangnam-do	South Korea
+Anyang-si	Gyeonggi-do	South Korea
+Anseong	Gyeonggi-do	South Korea
+Ansan-si	Gyeonggi-do	South Korea
+Andong	Gyeongsangbuk-do	South Korea
 Atsugi	Kanagawa	Japan
 Akashi	Hyōgo	Japan
 Zushi	Kanagawa	Japan
@@ -8087,7 +8087,7 @@ Zhonggongmiao	Zhejiang Sheng	China
 Yu'an	Shanghai Shi	China
 Tanjung	Pahang	Malaysia
 Jeram	Selangor	Malaysia
-Ap'o	Gyeongsangbuk-do	Republic of Korea
+Ap'o	Gyeongsangbuk-do	South Korea
 Qingma	Zhejiang Sheng	China
 Sha'an	Zhejiang Sheng	China
 Yujing	Fujian	China
@@ -8098,10 +8098,10 @@ Putuoshan	Zhejiang Sheng	China
 Lujiazhi	Zhejiang Sheng	China
 Zhenghai	Shanghai Shi	China
 Hikari	Yamaguchi	Japan
-Seongnam-si	Gyeonggi-do	Republic of Korea
-Hanam	Gyeonggi-do	Republic of Korea
-Unpo	Gyeonggi-do	Republic of Korea
-Namyangju	Gyeonggi-do	Republic of Korea
+Seongnam-si	Gyeonggi-do	South Korea
+Hanam	Gyeonggi-do	South Korea
+Unpo	Gyeonggi-do	South Korea
+Namyangju	Gyeonggi-do	South Korea
 Hiro	Hiroshima	Japan
 Taimen	Zhejiang Sheng	China
 Tanaka	Saga Prefecture	Japan
@@ -8443,9 +8443,9 @@ An Thanh	Tinh Soc Trang	Vietnam
 Thanh Nguyen	Tinh Tra Vinh	Vietnam
 Yulong	Chongqing Shi	China
 Miaoxi	Chongqing Shi	China
-Sihung	Gyeonggi-do	Republic of Korea
+Sihung	Gyeonggi-do	South Korea
 Ruicheng	Liaoning	China
-Koje	Gyeongsangnam-do	Republic of Korea
+Koje	Gyeongsangnam-do	South Korea
 Del Monte	Zamboanga Peninsula	Philippines
 Cagayan	Northern Mindanao	Philippines
 Sangereng	West Java	Indonesia
@@ -77502,7 +77502,7 @@ Sistema	Chelyabinsk	Russia
 Kosteniki	Kirovskaya Oblast'	Russia
 Barrio Fisherton	Argentina
 Balaguer	Catalonia	Spain
-Boryeong	Gangwon-do	Republic of Korea
+Boryeong	Gangwon-do	South Korea
 Yanar	Mohafazat Mont-Liban	Lebanon
 Écublens	Vaud	Switzerland
 Serbia
@@ -77586,14 +77586,14 @@ Cales de Mallorca	Balearic Islands	Spain
 Banyeres de Mariola	Valencia	Spain
 Balenya	Catalonia	Spain
 Ceuta	Ceuta	Spain
-Kimso	Gyeonggi-do	Republic of Korea
+Kimso	Gyeonggi-do	South Korea
 Duren	Central Java	Indonesia
 Banjarnegara	Central Java	Indonesia
 Kebumen	Central Java	Indonesia
 Menteng	Central Java	Indonesia
-Kangnam	Jeollanam-do	Republic of Korea
-Gunnae	Gyeonggi-do	Republic of Korea
-Dongan	Gyeonggi-do	Republic of Korea
+Kangnam	Jeollanam-do	South Korea
+Gunnae	Gyeonggi-do	South Korea
+Dongan	Gyeonggi-do	South Korea
 Gandul	Central Java	Indonesia
 Jinhe	Hunan	China
 Heyuan	Hunan	China
@@ -77851,11 +77851,11 @@ Kulon	Central Java	Indonesia
 Kalideres	Central Java	Indonesia
 Mojotengah	Central Java	Indonesia
 Wilayah	Central Java	Indonesia
-Namhyang-dong	Gyeonggi-do	Republic of Korea
-Seong-dong	Gyeonggi-do	Republic of Korea
-Yeosu	Gyeonggi-do	Republic of Korea
-Gyeongsu	Gyeonggi-do	Republic of Korea
-Jangseong	Gyeonggi-do	Republic of Korea
+Namhyang-dong	Gyeonggi-do	South Korea
+Seong-dong	Gyeonggi-do	South Korea
+Yeosu	Gyeonggi-do	South Korea
+Gyeongsu	Gyeonggi-do	South Korea
+Jangseong	Gyeonggi-do	South Korea
 Cempaka	West Java	Indonesia
 Cihampelas	West Java	Indonesia
 Cimahi	West Java	Indonesia
@@ -78010,13 +78010,13 @@ Wates	East Java	Indonesia
 Sanur	East Java	Indonesia
 Kopeng	Central Java	Indonesia
 Wonosobo	Central Java	Indonesia
-Ch'aeun	Gangwon-do	Republic of Korea
-Songnim	Gyeonggi-do	Republic of Korea
-Yongsan-dong	Seoul	Republic of Korea
-Hyoja-dong	Seoul	Republic of Korea
-Koyang-dong	Gyeonggi-do	Republic of Korea
+Ch'aeun	Gangwon-do	South Korea
+Songnim	Gyeonggi-do	South Korea
+Yongsan-dong	Seoul	South Korea
+Hyoja-dong	Seoul	South Korea
+Koyang-dong	Gyeonggi-do	South Korea
 Merbok	Kedah	Malaysia
-Sacheon	Chungcheongbuk-do	Republic of Korea
+Sacheon	Chungcheongbuk-do	South Korea
 Novator	Krasnodarskiy Kray	Russia
 Chernushka	Perm Krai	Russia
 Bashkortostan	Bashkortostan	Russia
@@ -78145,14 +78145,14 @@ Mingde	Sichuan Sheng	China
 Macao	Sichuan Sheng	China
 Tongji	Sichuan Sheng	China
 Yuzhen	Sichuan Sheng	China
-Kyeryong	Jeollabuk-do	Republic of Korea
-Songam	Chungcheongbuk-do	Republic of Korea
-Samsung	Chungcheongbuk-do	Republic of Korea
-Se-ri	Gyeongsangbuk-do	Republic of Korea
-Ka-ri	Chungcheongbuk-do	Republic of Korea
+Kyeryong	Jeollabuk-do	South Korea
+Songam	Chungcheongbuk-do	South Korea
+Samsung	Chungcheongbuk-do	South Korea
+Se-ri	Gyeongsangbuk-do	South Korea
+Ka-ri	Chungcheongbuk-do	South Korea
 Aizhou	Guangdong	China
 Guangchang	Guangdong	China
-Hansol	Gyeongsangbuk-do	Republic of Korea
+Hansol	Gyeongsangbuk-do	South Korea
 Fengshang	Jiangxi Sheng	China
 Guoshang	Fujian	China
 Dongduan	Fujian	China
@@ -79252,7 +79252,7 @@ Saubraz	Vaud	Switzerland
 Pompaples	Vaud	Switzerland
 Castellbell i el Vilar	Catalonia	Spain
 Marsango	Veneto	Italy
-Gwacheon-si	Gyeonggi-do	Republic of Korea
+Gwacheon-si	Gyeonggi-do	South Korea
 Bischofszell	Thurgau	Switzerland
 Coldrerio	Ticino	Switzerland
 Kamikita-kita	Aomori	Japan
@@ -79442,8 +79442,8 @@ Reykjanesbaer	Southern Peninsula	Iceland
 Island Park	Calabarzon	Philippines
 Lossatal	Saxony	Germany
 Favang	Oppland	Norway
-Jinhae-gu	Gyeongsangnam-do	Republic of Korea
-Wonmi-gu	Gyeonggi-do	Republic of Korea
+Jinhae-gu	Gyeongsangnam-do	South Korea
+Wonmi-gu	Gyeonggi-do	South Korea
 Binanuova	Lombardy	Italy
 Saint-Paul-de-la-Croix	Quebec	Canada
 Desbiens	Quebec	Canada
@@ -79491,7 +79491,7 @@ Saint-Fabien-de-Panet	Quebec	Canada
 Dosquet	Quebec	Canada
 Saint-Godefroi	Quebec	Canada
 Ping'an	Shandong Sheng	China
-Ilsan-dong	Ulsan	Republic of Korea
+Ilsan-dong	Ulsan	South Korea
 Akkerhaugen	Telemark	Norway
 Tenniken	Basel-Landschaft	Switzerland
 La Romain	City of San Fernando	Trinidad and Tobago
