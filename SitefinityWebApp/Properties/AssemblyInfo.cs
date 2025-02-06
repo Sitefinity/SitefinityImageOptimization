@@ -8,7 +8,7 @@ using System.Resources;
 // associated with an assembly.
 [assembly: AssemblyCompany("Progress")]
 [assembly: AssemblyProduct("Progress Sitefinity CMS")]
-[assembly: AssemblyCopyright("Copyright © 2005-2017 Telerik AD. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright ï¿½ 2005-2017 Telerik AD. All rights reserved.")]
 [assembly: AssemblyTrademark("Sitefinity")]
 [assembly: AssemblyTitle("Sitefinity Web Application")]
 [assembly: AssemblyDescription("")]
@@ -36,6 +36,8 @@ using System.Resources;
 [assembly: AssemblyVersion("10.2.6626.0")]
 [assembly: AssemblyFileVersion("10.2.6626.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
+
+
 
 
 
