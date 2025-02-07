@@ -142,13 +142,16 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 
                     Stream stream = this.GetImageStream(response.Body.KrakedUrl);
 
+                    MemoryStream memoryStream = new MemoryStream();
+                    stream.CopyTo(memoryStream);
+
                     if (this.webpCompression)
                     {
                         fileInput.FileExtension = ".webp";
                         fileInput.MimeType = "image/webp";
                     }
 
-                    return stream;
+                    return memoryStream;
                 }
                 catch(TaskCanceledException)
                 {
