@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.FileProcessors;
@@ -97,7 +96,6 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                     }
 
                     byte[] imageBytes = this.GetByteArray(fileInput.FileStream);
-
                     var sourceData = Tinify.FromBuffer(imageBytes);
 
                     if (this.preserveMetadata)
@@ -105,20 +103,41 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                         sourceData.Preserve(this.MetadataKeys);
                     }
 
-                    var resultData = sourceData.ToBuffer().ContinueWith(t => t.GetAwaiter().GetResult(), timeoutCancellationTokenSource.Token).Result;
+                    var task = sourceData.ToBuffer();
+                    if (!task.Wait(TimeSpan.FromSeconds(timeoutDurationInSeconds)))
+                    {
+                        Log.Write(ImageOptimizationTimeOutExceptionMessage, ConfigurationPolicy.ErrorLog);
 
-                    Stream stream = new MemoryStream(resultData);
+                        return fileInput.FileStream;
+                    }
 
-                    return stream;
+                    if (task.IsCanceled)
+                    {
+                        Log.Write(ImageOptimizationCanceledExceptionMessage, ConfigurationPolicy.ErrorLog);
+
+                        return fileInput.FileStream;
+                    }
+
+                    var taskResult = task.GetAwaiter().GetResult();
+
+                    return new MemoryStream(taskResult);
                 }
-                catch (TaskCanceledException)
+                catch (TimeoutException)
                 {
-                    Log.Write("Image optimization has timed out. Default image stream was returned.", ConfigurationPolicy.ErrorLog);
+                    Log.Write(ImageOptimizationTimeOutExceptionMessage, ConfigurationPolicy.ErrorLog);
+
+                    return fileInput.FileStream;
+                }
+                catch (OperationCanceledException)
+                {
+                    Log.Write(ImageOptimizationCanceledExceptionMessage, ConfigurationPolicy.ErrorLog);
+
                     return fileInput.FileStream;
                 }
                 catch (Exception ex)
                 {
                     Log.Write(ex, ConfigurationPolicy.ErrorLog);
+
                     return fileInput.FileStream;
                 }
             }
@@ -147,8 +166,12 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
 
         private const string TimeoutConfigName = "TimeoutAfter";
 
+        private const string ImageOptimizationTimeOutExceptionMessage = "Image optimization has timed out. Default image stream was returned.";
+
+        private const string ImageOptimizationCanceledExceptionMessage = "Image optimization task was canceled. Default image stream was returned.";
+
         private readonly string[] MetadataKeys = new string[] { "copyright", "location", "creation" };
 
-        private const int timeoutDefaultDuration = 30;
+        private const int timeoutDefaultDuration = 60;
     }
 }
