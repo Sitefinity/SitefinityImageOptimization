@@ -2,8 +2,9 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using Telerik.Sitefinity.FileProcessors;
 using Progress.Sitefinity.ImageOptimization.Utils;
+using Telerik.Sitefinity.Abstractions;
+using Telerik.Sitefinity.FileProcessors;
 using Telerik.Sitefinity.Processors;
 
 namespace Progress.Sitefinity.ImageOptimization.FileProcessors
@@ -64,6 +65,8 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
         /// <inheritdoc />
         public virtual bool CanProcessFile(FileProcessorInput fileInput)
         {
+            Log.Write("Can process file method is called. ");
+
             var disableImageOptimizationAppSetting = System.Configuration.ConfigurationManager.AppSettings[ImageOptimizationConstants.DisableImageOptimizationAppSettingKey];
             bool disableImageOptimization;
 
@@ -82,18 +85,24 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 return false;
             }
 
+            Log.Write("Can process file method return true. ");
+
             return true;
         }
 
         /// <inheritdoc />
         Stream IFileProcessor.Process(FileProcessorInput fileInput)
         {
+            Log.Write("Process image is called. ");
+
             if (fileInput == null)
             {
                 throw new ArgumentException("fileInput cannot be null");
             }
 
             Stream optimizedFileStream = this.Process(fileInput);
+
+            Log.Write("Process image is compleated successfuly. ");
 
             return optimizedFileStream;
         }
