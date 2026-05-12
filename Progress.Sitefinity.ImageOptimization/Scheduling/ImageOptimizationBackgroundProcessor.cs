@@ -93,6 +93,8 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
                 catch (Exception ex)
                 {
                     this.BuildTrace(string.Format("Optimization of image {0} ({1}) failed with exception {2}", image.Title, image.Id, ex.Message), true);
+
+                    image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
                 }
 
                 this.WriteTraceLog();
