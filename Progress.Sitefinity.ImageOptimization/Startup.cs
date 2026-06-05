@@ -123,7 +123,7 @@ namespace Progress.Sitefinity.ImageOptimization
                 var item = manager.GetItemOrDefault(contentType, itemId);
                 Image image = item as Image;
 
-                SystemManager.RunWithElevatedPrivilege((parameters) =>
+                using (new AllProvidersAccessRegion())
                 {
                     if (image.Status == ContentLifecycleStatus.Master)
                     {
@@ -139,7 +139,7 @@ namespace Progress.Sitefinity.ImageOptimization
                     }
 
                     TransactionManager.CommitTransaction(manager.TransactionName);
-                });
+                }
 
             }
             catch (Exception ex)
