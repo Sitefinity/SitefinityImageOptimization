@@ -123,20 +123,23 @@ namespace Progress.Sitefinity.ImageOptimization
                 var item = manager.GetItemOrDefault(contentType, itemId);
                 Image image = item as Image;
 
-                if (image.Status == ContentLifecycleStatus.Master)
+                SystemManager.RunWithElevatedPrivilege((parameters) =>
                 {
-                    var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
-                    imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                    manager.Lifecycle.CheckIn(imageTemp);
-                }
-                else if (image.Status == ContentLifecycleStatus.Temp)
-                {
-                    image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                    Image master = manager.Lifecycle.GetMaster(image) as Image;
-                    master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                }
+                    if (image.Status == ContentLifecycleStatus.Master)
+                    {
+                        var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
+                        imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        manager.Lifecycle.CheckIn(imageTemp);
+                    }
+                    else if (image.Status == ContentLifecycleStatus.Temp)
+                    {
+                        image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        Image master = manager.Lifecycle.GetMaster(image) as Image;
+                        master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    }
 
-                TransactionManager.CommitTransaction(manager.TransactionName);
+                    TransactionManager.CommitTransaction(manager.TransactionName);
+                });
 
             }
             catch (Exception ex)
