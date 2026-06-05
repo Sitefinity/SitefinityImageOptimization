@@ -113,30 +113,33 @@ namespace Progress.Sitefinity.ImageOptimization
 
                 ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
 
-                LibrariesManager manager = ManagerBase.GetMappedManagerInTransaction(contentType, providerName, Guid.NewGuid().ToString()) as LibrariesManager;
-
-                if (manager == null)
+                using (new AllProvidersAccessRegion())
                 {
-                    return;
-                }
+                    LibrariesManager manager = ManagerBase.GetMappedManagerInTransaction(contentType, providerName, Guid.NewGuid().ToString()) as LibrariesManager;
 
-                var item = manager.GetItemOrDefault(contentType, itemId);
-                Image image = item as Image;
+                    if (manager == null)
+                    {
+                        return;
+                    }
 
-                if (image.Status == ContentLifecycleStatus.Master)
-                {
-                    var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
-                    imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                    manager.Lifecycle.CheckIn(imageTemp);
-                }
-                else if (image.Status == ContentLifecycleStatus.Temp)
-                {
-                    image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                    Image master = manager.Lifecycle.GetMaster(image) as Image;
-                    master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
-                }
+                    var item = manager.GetItemOrDefault(contentType, itemId);
+                    Image image = item as Image;
 
-                TransactionManager.CommitTransaction(manager.TransactionName);
+                    if (image.Status == ContentLifecycleStatus.Master)
+                    {
+                        var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
+                        imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        manager.Lifecycle.CheckIn(imageTemp);
+                    }
+                    else if (image.Status == ContentLifecycleStatus.Temp)
+                    {
+                        image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        Image master = manager.Lifecycle.GetMaster(image) as Image;
+                        master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                    }
+
+                    TransactionManager.CommitTransaction(manager.TransactionName);
+                }
 
             }
             catch (Exception ex)

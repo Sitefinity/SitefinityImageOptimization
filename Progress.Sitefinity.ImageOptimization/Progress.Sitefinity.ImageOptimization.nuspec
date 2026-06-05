@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Progress.Sitefinity.ImageOptimization</id>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <title>Progress.Sitefinity.ImageOptimization</title>
     <authors>Progress Software Corporation</authors>
     <owners>Progress Software Corporation</owners>
@@ -13,7 +13,7 @@
     <iconUrl>http://nuget.sitefinity.com/img/progresslogo.png</iconUrl>
     <description>This package contains assemblies that provide functionality for processing and optimizing images using third-party services: Kraken.io and Tinify.</description>
     <releaseNotes>Initial implementation of image optimization.</releaseNotes>
-    <copyright>Copyright © 2005-2021 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.</copyright>
+    <copyright>Copyright © 2005-2026 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.</copyright>
     <tags>Sitefinity Image Optimization</tags>
     <dependencies>
       <dependency id="kraken-net" version="2.0.1" />
