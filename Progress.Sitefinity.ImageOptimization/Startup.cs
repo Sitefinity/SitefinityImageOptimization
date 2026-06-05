@@ -113,18 +113,18 @@ namespace Progress.Sitefinity.ImageOptimization
 
                 ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
 
-                LibrariesManager manager = ManagerBase.GetMappedManagerInTransaction(contentType, providerName, Guid.NewGuid().ToString()) as LibrariesManager;
-
-                if (manager == null)
-                {
-                    return;
-                }
-
-                var item = manager.GetItemOrDefault(contentType, itemId);
-                Image image = item as Image;
-
                 using (new AllProvidersAccessRegion())
                 {
+                    LibrariesManager manager = ManagerBase.GetMappedManagerInTransaction(contentType, providerName, Guid.NewGuid().ToString()) as LibrariesManager;
+
+                    if (manager == null)
+                    {
+                        return;
+                    }
+
+                    var item = manager.GetItemOrDefault(contentType, itemId);
+                    Image image = item as Image;
+
                     if (image.Status == ContentLifecycleStatus.Master)
                     {
                         var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
