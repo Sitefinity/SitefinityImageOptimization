@@ -7,8 +7,8 @@ This repository contains an example project that uses third party services like 
 ## How to setup
 
 1. Build the solution.
-2. Setup an IIS website pointing to the SitefinityWebApp and proceed with the standard Sitefinity setup.
-3. Refer to the details below and enable and configure the image optimization
+1. Setup an IIS website pointing to the SitefinityWebApp and proceed with the standard Sitefinity setup.
+1. Refer to the details below and enable and configure the image optimization
 
 ## Configurations
 ### Kraken IO
