@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.FileProcessors;
+using Progress.Sitefinity.ImageOptimization.Scheduling;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Events;
 using Telerik.Sitefinity.GenericContent.Model;
-using Progress.Sitefinity.ImageOptimization.Configuration;
-using Progress.Sitefinity.ImageOptimization.FileProcessors;
-using Progress.Sitefinity.ImageOptimization.Scheduling;
-using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
@@ -122,6 +122,8 @@ namespace Progress.Sitefinity.ImageOptimization
                         return;
                     }
 
+                    manager.Provider.SuppressSecurityChecks = true;
+
                     var item = manager.GetItemOrDefault(contentType, itemId);
                     Image image = item as Image;
 
@@ -165,7 +167,7 @@ namespace Progress.Sitefinity.ImageOptimization
                 return false;
             }
 
-            if(propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName))
+            if (propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName))
             {
                 var changedIsOptimized = propertyChangeDataEvent.ChangedProperties.FirstOrDefault(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName);
 
