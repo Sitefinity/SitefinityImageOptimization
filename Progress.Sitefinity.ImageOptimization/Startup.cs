@@ -122,8 +122,6 @@ namespace Progress.Sitefinity.ImageOptimization
                         return;
                     }
 
-                    manager.Provider.SuppressSecurityChecks = true;
-
                     var item = manager.GetItemOrDefault(contentType, itemId);
                     Image image = item as Image;
 
