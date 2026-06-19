@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.FileProcessors;
+using Progress.Sitefinity.ImageOptimization.Scheduling;
+using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Data.Events;
 using Telerik.Sitefinity.GenericContent.Model;
-using Progress.Sitefinity.ImageOptimization.Configuration;
-using Progress.Sitefinity.ImageOptimization.FileProcessors;
-using Progress.Sitefinity.ImageOptimization.Scheduling;
-using Progress.Sitefinity.ImageOptimization.Utils;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
@@ -69,7 +69,7 @@ namespace Progress.Sitefinity.ImageOptimization
                 }
 
 
-                Startup.hassImageOptimizationProcessorEnabled = ImageOptimizationProcessorsHelper.ValidateImageOptimizationProcessorsConfigurations();
+                Startup.hasImageOptimizationProcessorEnabled = ImageOptimizationProcessorsHelper.ValidateImageOptimizationProcessorsConfigurations();
 
                 Res.RegisterResource<ImageOptimizationResources>();
                 Config.RegisterSection<ImageOptimizationConfig>();
@@ -128,14 +128,14 @@ namespace Progress.Sitefinity.ImageOptimization
                     if (image.Status == ContentLifecycleStatus.Master)
                     {
                         var imageTemp = manager.Lifecycle.CheckOut(image) as Image;
-                        imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        imageTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hasImageOptimizationProcessorEnabled);
                         manager.Lifecycle.CheckIn(imageTemp);
                     }
                     else if (image.Status == ContentLifecycleStatus.Temp)
                     {
-                        image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hasImageOptimizationProcessorEnabled);
                         Image master = manager.Lifecycle.GetMaster(image) as Image;
-                        master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hassImageOptimizationProcessorEnabled);
+                        master.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, Startup.hasImageOptimizationProcessorEnabled);
                     }
 
                     TransactionManager.CommitTransaction(manager.TransactionName);
@@ -160,16 +160,23 @@ namespace Progress.Sitefinity.ImageOptimization
 
             var propertyChangeDataEvent = @event as IPropertyChangeDataEvent;
 
-            if (propertyChangeDataEvent == null || (!propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == "Thumbnails") && !propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName)))
+            // If only Thumbnails changed (e.g. lazy thumbnail generation), skip — 
+            // no need to re-set IsOptimized.
+            if (propertyChangeDataEvent.ChangedProperties.All(p => p.Key == Thumbnails))
             {
                 return false;
             }
 
-            if(propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName))
+            if (propertyChangeDataEvent == null || (!propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == Thumbnails) && !propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName)))
+            {
+                return false;
+            }
+
+            if (propertyChangeDataEvent.ChangedProperties.Any(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName))
             {
                 var changedIsOptimized = propertyChangeDataEvent.ChangedProperties.FirstOrDefault(p => p.Key == ImageOptimizationConstants.IsOptimizedFieldName);
 
-                if ((bool)changedIsOptimized.Value.NewValue == Startup.hassImageOptimizationProcessorEnabled)
+                if ((bool)changedIsOptimized.Value.NewValue == Startup.hasImageOptimizationProcessorEnabled)
                 {
                     return false;
                 }
@@ -189,6 +196,8 @@ namespace Progress.Sitefinity.ImageOptimization
             SystemManager.CrontabTasksToRun.Add(ImageOptimizationTask.GetTaskName(), ImageOptimizationTask.NewInstance);
         }
 
-        private static bool hassImageOptimizationProcessorEnabled;
+        private static bool hasImageOptimizationProcessorEnabled;
+
+        private const string Thumbnails = "Thumbnails";
     }
 }
