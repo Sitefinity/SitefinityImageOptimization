@@ -196,10 +196,11 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 throw new ArgumentException("stream cannot be null");
             }
 
-            byte[] bytes = new byte[stream.Length];
-            stream.Read(bytes, 0, (int)stream.Length);
-
-            return bytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
 
         private bool lossyCompression;
