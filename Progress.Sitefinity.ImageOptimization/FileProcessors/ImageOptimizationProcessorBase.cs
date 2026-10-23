@@ -35,6 +35,14 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
             }
         }
 
+        internal string[] SupportedExtensions
+        {
+            get
+            {
+                return this.supportedExtensions;
+            }
+        }
+
         /// <inheritdoc />
         protected sealed override void Initialize(NameValueCollection config)
         {
