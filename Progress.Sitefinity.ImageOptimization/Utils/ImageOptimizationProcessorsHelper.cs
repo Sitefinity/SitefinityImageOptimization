@@ -30,6 +30,16 @@ namespace Progress.Sitefinity.ImageOptimization.Utils
 
         internal static bool ValidateImageOptimizationProcessorsConfigurations()
         {
+            return ImageOptimizationProcessorsHelper.GetImageOptimizationProcessors().Count > 0;
+        }
+
+        /// <summary>
+        /// Creates the enabled and successfully initialized image optimization processors, in configuration order.
+        /// </summary>
+        internal static IList<ImageOptimizationProcessorBase> GetImageOptimizationProcessors()
+        {
+            var processors = new List<ImageOptimizationProcessorBase>();
+
             try
             {
                 var configFileProcessors = Config.Get<LibrariesConfig>().GetConfigProcessors();
@@ -43,11 +53,11 @@ namespace Progress.Sitefinity.ImageOptimization.Utils
 
                         instance.Initialize(configFileProcessorsElement.Name, configFileProcessorsElement.Parameters);
 
-                        var installableFileProcessor = instance as IInstallableFileProcessor;
+                        var imageOptimizationProcessor = instance as ImageOptimizationProcessorBase;
 
-                        if (installableFileProcessor != null && installableFileProcessor.HasInitialized)
+                        if (imageOptimizationProcessor != null && imageOptimizationProcessor.HasInitialized)
                         {
-                            return true;
+                            processors.Add(imageOptimizationProcessor);
                         }
                     }
                 }
@@ -55,10 +65,10 @@ namespace Progress.Sitefinity.ImageOptimization.Utils
             catch (Exception ex)
             {
                 Log.Write(ex.Message, TraceEventType.Error);
-                return false;
+                processors.Clear();
             }
 
-            return false;
+            return processors;
         }
 
         internal static void RegisterImageOptimizationProcessors(IEnumerable<IInstallableFileProcessor> imageOptimizationProcessors)
