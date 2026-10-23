@@ -93,7 +93,15 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 throw new ArgumentException("fileInput cannot be null");
             }
 
+            Stream originalFileStream = fileInput.FileStream;
             Stream optimizedFileStream = this.Process(fileInput);
+
+            // Processors return the original stream when optimization fails.
+            ImageOptimizationScope scope = ImageOptimizationScope.Current;
+            if (scope != null && optimizedFileStream != null && optimizedFileStream != originalFileStream)
+            {
+                scope.IsOptimized = true;
+            }
 
             return optimizedFileStream;
         }
