@@ -85,6 +85,12 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 return false;
             }
 
+            ImageOptimizationScope scope = ImageOptimizationScope.Current;
+            if (scope != null && scope.IsOptimized)
+            {
+                return false;
+            }
+
             if (!this.supportedExtensions.Contains(fileInput.FileExtension))
             {
                 return false;
