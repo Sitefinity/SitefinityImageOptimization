@@ -9,7 +9,9 @@ using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.GenericContent.Model;
 using Progress.Sitefinity.ImageOptimization.Configuration;
+using Progress.Sitefinity.ImageOptimization.FileProcessors;
 using Progress.Sitefinity.ImageOptimization.Utils;
+using Telerik.Sitefinity.FileProcessors;
 using Telerik.Sitefinity.Libraries.Model;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Model;
@@ -25,10 +27,16 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
             ImageOptimizationConfig imageOptimizationConfig = Config.Get<ImageOptimizationConfig>();
             this.batchSize = imageOptimizationConfig.BatchSize;
             this.enableDetailedLogging = imageOptimizationConfig.EnableDetailLogging;
+            this.processors = ImageOptimizationProcessorsHelper.GetImageOptimizationProcessors();
         }
 
         internal void ProcessImages()
         {
+            if (this.processors.Count == 0)
+            {
+                return;
+            }
+
             foreach (var provider in this.Providers)
             {
                 try
@@ -56,7 +64,10 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
             bool itemsProcessed = false;
             int processedImages = 0;
 
-            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && ((i.GetValue<object>(ImageOptimizationConstants.IsOptimizedFieldName) == null) || !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName))).Take(this.batchSize);
+            // Images no processor can optimize would otherwise be selected on every run.
+            string[] supportedExtensions = this.processors.SelectMany(p => p.SupportedExtensions).Distinct().ToArray();
+
+            IEnumerable<Image> images = librariesManager.GetImages().Where(i => i.Status == ContentLifecycleStatus.Master && i.MediaFileLinks.Any(l => supportedExtensions.Contains(l.Extension)) && ((i.GetValue<object>(ImageOptimizationConstants.IsOptimizedFieldName) == null) || !i.GetValue<bool>(ImageOptimizationConstants.IsOptimizedFieldName))).Take(this.batchSize);
 
             foreach (var image in images)
             {
@@ -64,37 +75,36 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
                 {
                     this.BuildTrace(string.Format("{0} - Attempting to optimize image {1} ({2})", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
 
-                    Image master = image;
-                    Image temp = librariesManager.Lifecycle.CheckOut(image) as Image;
+                    Image temp = this.CheckOutWithOptimizedFile(librariesManager, image, image.Id, image.Extension, true);
 
-                    Stream sourceImageStream = librariesManager.Download(image.Id);
-                    librariesManager.Upload(temp, sourceImageStream, image.Extension, true);
-
-                    temp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
-
-                    master = librariesManager.Lifecycle.CheckIn(temp) as Image;
-
-                    ProcessReplacedImageTranslations(librariesManager, master);
-
-                    if (master.ApprovalWorkflowState == "Published")
+                    if (temp == null)
                     {
-                        librariesManager.Lifecycle.Publish(master);
+                        this.BuildTrace(string.Format("{0} - Image {1} ({2}) could not be optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
                     }
-
-                    this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
-
-                    if (processedImages % 5 == 0)
+                    else
                     {
-                        TransactionManager.CommitTransaction(transactionName);
-                    }
+                        Image master = librariesManager.Lifecycle.CheckIn(temp) as Image;
 
-                    processedImages += 1;
+                        ProcessReplacedImageTranslations(librariesManager, master);
+
+                        if (master.ApprovalWorkflowState == "Published")
+                        {
+                            librariesManager.Lifecycle.Publish(master);
+                        }
+
+                        this.BuildTrace(string.Format("{0} - Image {1} ({2}) has been optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id));
+
+                        if (processedImages % 5 == 0)
+                        {
+                            TransactionManager.CommitTransaction(transactionName);
+                        }
+
+                        processedImages += 1;
+                    }
                 }
                 catch (Exception ex)
                 {
                     this.BuildTrace(string.Format("Optimization of image {0} ({1}) failed with exception {2}", image.Title, image.Id, ex.Message), true);
-
-                    image.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
                 }
 
                 this.WriteTraceLog();
@@ -129,11 +139,13 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
 
                             Image translatedMaster = (linkItem.MediaContent.OriginalContentId == Guid.Empty ? linkItem.MediaContent : librariesManager.GetMediaItem(linkItem.MediaContent.OriginalContentId)) as Image;
 
-                            Image translatedTemp = librariesManager.Lifecycle.CheckOut(translatedMaster) as Image;
+                            Image translatedTemp = this.CheckOutWithOptimizedFile(librariesManager, translatedMaster, linkItem.MediaContentId, image.Extension, false);
 
-                            Stream translationSourceImageStream = librariesManager.Download(linkItem.MediaContentId);
-                            librariesManager.Upload(translatedTemp, translationSourceImageStream, image.Extension, false);
-                            translatedTemp.SetValue(ImageOptimizationConstants.IsOptimizedFieldName, true);
+                            if (translatedTemp == null)
+                            {
+                                this.BuildTrace(string.Format("{0} - Image {1} ({2}) in culture {3} could not be optimized", DateTime.UtcNow.ToString("yyyy-MM-dd-T-HH:mm:ss"), image.Title, image.Id, currentCultureInfo.Name));
+                                continue;
+                            }
 
                             translatedMaster = librariesManager.Lifecycle.CheckIn(translatedTemp) as Image;
 
@@ -152,6 +164,41 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Optimizes the file of the given item and uploads it to a checked out image, or returns null if no processor optimized it.
+        /// </summary>
+        private Image CheckOutWithOptimizedFile(LibrariesManager librariesManager, Image master, Guid fileItemId, string extension, bool uploadAndReplace)
+        {
+            using (ImageOptimizationScope scope = ImageOptimizationScope.Begin())
+            {
+                FileProcessorInput fileInput = new FileProcessorInput()
+                {
+                    FileExtension = extension,
+                    FileStream = librariesManager.Download(fileItemId)
+                };
+
+                foreach (IFileProcessor processor in this.processors)
+                {
+                    if (processor.CanProcessFile(fileInput))
+                    {
+                        fileInput.FileStream = processor.Process(fileInput);
+                    }
+                }
+
+                if (!scope.IsOptimized)
+                {
+                    return null;
+                }
+
+                Image temp = librariesManager.Lifecycle.CheckOut(master) as Image;
+
+                // Within the scope the upload does not optimize the file again and marks the image as optimized.
+                librariesManager.Upload(temp, fileInput.FileStream, fileInput.FileExtension, uploadAndReplace);
+
+                return temp;
             }
         }
 
@@ -200,6 +247,7 @@ namespace Progress.Sitefinity.ImageOptimization.Scheduling
 
         private int batchSize;
         private bool enableDetailedLogging;
+        private IList<ImageOptimizationProcessorBase> processors;
         private StringBuilder logTraceBuilder;
         private IEnumerable<string> providers;
     }

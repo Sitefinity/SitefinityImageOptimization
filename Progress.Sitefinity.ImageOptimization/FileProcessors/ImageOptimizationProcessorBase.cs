@@ -35,6 +35,14 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
             }
         }
 
+        internal string[] SupportedExtensions
+        {
+            get
+            {
+                return this.supportedExtensions;
+            }
+        }
+
         /// <inheritdoc />
         protected sealed override void Initialize(NameValueCollection config)
         {
@@ -77,6 +85,12 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 return false;
             }
 
+            ImageOptimizationScope scope = ImageOptimizationScope.Current;
+            if (scope != null && scope.IsOptimized)
+            {
+                return false;
+            }
+
             if (!this.supportedExtensions.Contains(fileInput.FileExtension))
             {
                 return false;
@@ -93,7 +107,15 @@ namespace Progress.Sitefinity.ImageOptimization.FileProcessors
                 throw new ArgumentException("fileInput cannot be null");
             }
 
+            Stream originalFileStream = fileInput.FileStream;
             Stream optimizedFileStream = this.Process(fileInput);
+
+            // Processors return the original stream when optimization fails.
+            ImageOptimizationScope scope = ImageOptimizationScope.Current;
+            if (scope != null && optimizedFileStream != null && optimizedFileStream != originalFileStream)
+            {
+                scope.IsOptimized = true;
+            }
 
             return optimizedFileStream;
         }
